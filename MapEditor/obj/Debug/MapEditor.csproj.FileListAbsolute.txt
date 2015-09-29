@@ -14,6 +14,3 @@ C:\Users\Thomas\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\De
 C:\Users\Thomas\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MapEditor.pdb
 C:\Users\Thomas\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\NewMap.g.cs
 C:\Users\Thomas\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\NewMap.baml
-C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\bin\Debug\MapEditor.exe.config
-C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MapEditor.exe
-C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MapEditor.pdb

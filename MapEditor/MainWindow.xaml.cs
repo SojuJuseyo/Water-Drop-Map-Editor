@@ -29,7 +29,7 @@ namespace MapEditor
         {
             public Color tileColor;
         }
-        tile[,] globalMap;
+        tile[,] globalMapee;
 
         public MainWindow()
         {

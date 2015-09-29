@@ -1,0 +1,11 @@
+﻿Fenêtre NewMap :
+
+-> Binder la touche "Enter" afin de valider la fenêtre directement.
+-> Ne pas valider si jamais la size est < 1
+
+Fenêtre MainWindow :
+
+-> Afficher quelque part le nom de la map.
+-> Création new map si on quitte ça segfault un peu
+-> N'afficher le menu que lorsque la map est crée
+-> Mettre un séparateur

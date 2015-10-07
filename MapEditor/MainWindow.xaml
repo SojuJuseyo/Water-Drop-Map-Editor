@@ -5,18 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MapEditor"
         mc:Ignorable="d"
-        Title="Water Drop Project Map Editor" Height="620" Width="1024">
-    <Grid Width="1021">
+        Title="Water Drop Project Map Editor" Height="620" Width="1024" MinHeight="620" MinWidth="1024">
+    <Grid>
         <Menu DockPanel.Dock="Top" Margin="0" Height="22" VerticalAlignment="Top" BorderThickness="0,0,0,1" BorderBrush="#FF9C9898">
             <MenuItem Header="_File" Margin="0" Padding="7,2,8,6">
                 <MenuItem Header="_New" Click="MenuFileNew_Click"/>
+                <MenuItem Header="_Save" Click="MenuFileNew_Save"/>
             </MenuItem>
         </Menu>
-        <TextBox x:Name="testTextBox" TextWrapping="Wrap" Margin="10,27,633,300"/>
-        <StackPanel MouseLeftButtonDown="setTileTexture" x:Name="mapGrid" HorizontalAlignment="Right" Margin="0,27,14,0" VerticalAlignment="Top" Width="550" Height="550"/>
-        <Button x:Name="redButton" Content="Red" HorizontalAlignment="Left" Margin="151,297,0,0" VerticalAlignment="Top" Width="50" Height="50" Click="redButton_Click"/>
-        <Button x:Name="greenButton" Content="Green" HorizontalAlignment="Left" Margin="85,297,0,0" VerticalAlignment="Top" Width="50" Height="50" Click="greenButton_Click"/>
-        <Button x:Name="blueButton" Content="Blue" HorizontalAlignment="Left" Margin="30,297,0,0" VerticalAlignment="Top" Width="50" Height="50" Click="blueButton_Click"/>
+        <StackPanel MouseLeftButtonDown="setTileTexture" x:Name="mapGrid" HorizontalAlignment="Right" Margin="0,27,9.6,0" VerticalAlignment="Top" Width="550" Height="550"/>
+        <Button x:Name="redButton" Content="Red" HorizontalAlignment="Left" Margin="181,52,0,0" VerticalAlignment="Top" Width="50" Height="50" Click="redButton_Click"/>
+        <Button x:Name="greenButton" Content="Green" HorizontalAlignment="Left" Margin="111,52,0,0" VerticalAlignment="Top" Width="50" Height="50" Click="greenButton_Click"/>
+        <Button x:Name="blueButton" Content="Blue" HorizontalAlignment="Left" Margin="35,52,0,0" VerticalAlignment="Top" Width="50" Height="50" Click="blueButton_Click" RenderTransformOrigin="0.702,-4.44"/>
+        <GridSplitter x:Name="gridSplitter" HorizontalAlignment="Left" Margin="440,27,0,0" VerticalAlignment="Top" Width="2" Height="550" Background="#FFCCCCCC"/>
     </Grid>
 </Window>
     

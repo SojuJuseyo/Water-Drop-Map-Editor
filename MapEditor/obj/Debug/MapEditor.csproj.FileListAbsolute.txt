@@ -14,3 +14,21 @@ C:\Users\Thomas\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\De
 C:\Users\Thomas\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MapEditor.pdb
 C:\Users\Thomas\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\NewMap.g.cs
 C:\Users\Thomas\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\NewMap.baml
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\bin\Debug\MapEditor.exe.config
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MapEditor.exe
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MapEditor.pdb
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\bin\Debug\MapEditor.exe
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\bin\Debug\MapEditor.pdb
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MapEditor.csprojResolveAssemblyReference.cache
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MainWindow.g.cs
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\NewMap.g.cs
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\App.g.cs
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MapEditor_MarkupCompile.cache
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MapEditor_MarkupCompile.lref
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MainWindow.baml
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\NewMap.baml
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MapEditor.g.resources
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MapEditor.Properties.Resources.resources
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MapEditor.csproj.GenerateResource.Cache
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\bin\Debug\Newtonsoft.Json.xml

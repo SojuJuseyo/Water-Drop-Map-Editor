@@ -32,12 +32,25 @@ namespace MapEditor
         // When the user validates the popup.
         private void validateButton_Click(object sender, RoutedEventArgs e)
         {
-            mapName = mapNameTextBox.Text;
+            if (!string.IsNullOrEmpty(mapNameTextBox.Text))
+                mapName = mapNameTextBox.Text;
+            else
+                mapNameTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
             if (!string.IsNullOrEmpty(xSizeTextBox.Text))
+            {
                 xSize = int.Parse(xSizeTextBox.Text);
+                if (xSize == 0)
+                    xSizeTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
+            }
             if (!string.IsNullOrEmpty(ySizeTextBox.Text))
+            {
                 ySize = int.Parse(ySizeTextBox.Text);
-            this.Close();
+                if (ySize == 0)
+                    ySizeTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
+            }
+
+            if (!string.IsNullOrEmpty(mapName) && xSize != 0 && ySize != 0)
+                this.Close();
         }
 
         // When the user wants to cancel and close the popup.

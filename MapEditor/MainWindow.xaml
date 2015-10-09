@@ -13,7 +13,7 @@
                 <MenuItem Header="_Save" Click="MenuFileNew_Save"/>
             </MenuItem>
         </Menu>
-        <StackPanel MouseLeftButtonDown="setTileTexture" x:Name="mapGrid" HorizontalAlignment="Right" Margin="0,27,9.6,0" VerticalAlignment="Top" Width="550" Height="550"/>
+        <StackPanel MouseLeftButtonDown="setTileTexture" x:Name="mapGrid" HorizontalAlignment="Right" Margin="0,27,9.6,0" VerticalAlignment="Top" Width="550" Height="550" MouseLeftButtonUp="setTileTextureApply"/>
         <Button x:Name="redButton" Content="Red" HorizontalAlignment="Left" Margin="181,52,0,0" VerticalAlignment="Top" Width="50" Height="50" Click="redButton_Click"/>
         <Button x:Name="greenButton" Content="Green" HorizontalAlignment="Left" Margin="111,52,0,0" VerticalAlignment="Top" Width="50" Height="50" Click="greenButton_Click"/>
         <Button x:Name="blueButton" Content="Blue" HorizontalAlignment="Left" Margin="35,52,0,0" VerticalAlignment="Top" Width="50" Height="50" Click="blueButton_Click" RenderTransformOrigin="0.702,-4.44"/>

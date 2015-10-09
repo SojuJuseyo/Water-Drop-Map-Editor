@@ -14,3 +14,4 @@ Le nom de la map est bien affiché.
 Nom par défaut du fichier lors de la sauvegarde.
 Vérification des inputs lors de la création de la nouvelle fenêtre.
 Séparateur entre la map et le menu de gauche.
+Possibilité de sélectionner plusieurs tiles d'un coup pour aller plus vite.

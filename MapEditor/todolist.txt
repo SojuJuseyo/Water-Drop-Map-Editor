@@ -5,7 +5,6 @@
 Fenêtre MainWindow :
 
 -> N'afficher le menu que lorsque la map est crée
--> Add a preview of the selected color
 
 Ajouté cette semaine :
 
@@ -15,3 +14,5 @@ Nom par défaut du fichier lors de la sauvegarde.
 Vérification des inputs lors de la création de la nouvelle fenêtre.
 Séparateur entre la map et le menu de gauche.
 Possibilité de sélectionner plusieurs tiles d'un coup pour aller plus vite.
+Deset de la couleur au reclic.
+Preview de la couleur sélectionnée.

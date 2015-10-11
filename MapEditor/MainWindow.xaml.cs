@@ -86,21 +86,9 @@ namespace MapEditor
                     mapGrid.Children.Add(panel);
                 }
             }
-        }
 
-        // Those variables are the coordinate of the rectangle on a MouseDown event
-        public int firstTileX { get; set; }
-        public int firstTileY { get; set; }
-
-        // Get the coordinates of the tile selected (or the first tile if multiple tiles are selected)
-        private void setTileTexture(object sender, MouseButtonEventArgs e)
-        {
-            Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
-
-            // Get the TAG of the Rectangle (tag contains coordinates)
-            String[] coo = ClickedRectangle.Tag.ToString().Split('/');
-            firstTileX = int.Parse(coo[0]);
-            firstTileY = int.Parse(coo[1]);
+            firstTileX = -1;
+            firstTileY = -1;
         }
 
         // To save a map
@@ -146,24 +134,26 @@ namespace MapEditor
             }
         }
 
+        // Remove special characters
         public string removeSpecialCharacters(string str)
         {
             return Regex.Replace(str, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
         }
 
-        private void redButton_Click(object sender, RoutedEventArgs e)
-        {
-            color = Colors.Red;
-        }
+        // Those variables are the coordinate of the rectangle on a MouseDown event
+        public int firstTileX { get; set; }
+        public int firstTileY { get; set; }
 
-        private void blueButton_Click(object sender, RoutedEventArgs e)
+        // Get the coordinates of the tile selected (or the first tile if multiple tiles are selected)
+        private void setTileTexture(object sender, MouseButtonEventArgs e)
         {
-            color = Colors.Blue;
-        }
+            Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
 
-        private void greenButton_Click(object sender, RoutedEventArgs e)
-        {
-            color = Colors.Green;
+            // Get the TAG of the Rectangle (tag contains coordinates)
+            String[] coo = ClickedRectangle.Tag.ToString().Split('/');
+            if (coo != null && coo.Length != 0)
+                firstTileX = int.Parse(coo[0]);
+            firstTileY = int.Parse(coo[1]);
         }
 
         // Apply the texture to the tile(s)
@@ -176,41 +166,83 @@ namespace MapEditor
             int secondTileX = int.Parse(coo[0]);
             int secondTileY = int.Parse(coo[1]);
 
-            // Define the smallest X and the biggest. Same for Y.
-            Tuple<int, int> xLimits;
-            Tuple<int, int> yLimits;
-
-            if (firstTileX > secondTileX)
-                xLimits = new Tuple<int, int>(secondTileX, firstTileX);
-            else
-                xLimits = new Tuple<int, int>(firstTileX, secondTileX);
-
-            if (firstTileY > secondTileY)
-                yLimits = new Tuple<int, int>(secondTileY, firstTileY);
-            else
-                yLimits = new Tuple<int, int>(firstTileY, secondTileY);
-
-            foreach (WrapPanel panelChild in mapGrid.Children)
+            // Shortly : MouseDown outside of a rectangle and MouseUp on one
+            if (firstTileX == -1 && firstTileY == -1)
             {
-                foreach (Rectangle rectangleChild in panelChild.Children)
-                {
-                    // Get the TAG of the Rectangle (tag contains coordinates)
-                    String[] currentCoo = rectangleChild.Tag.ToString().Split('/');
-                    int currentX = int.Parse(currentCoo[0]);
-                    int currentY = int.Parse(currentCoo[1]);
+                if (globalMap[secondTileX, secondTileY] == null)
+                    globalMap[secondTileX, secondTileY] = new tile();
+                ClickedRectangle.Fill = setRectangleColor(secondTileX, secondTileY);
+            }
+            else
+            {
+                // Define the smallest X and the biggest. Same for Y
+                Tuple<int, int> xLimits;
+                Tuple<int, int> yLimits;
 
-                    if (currentX >= xLimits.Item1 && currentX <= xLimits.Item2)
+                if (firstTileX > secondTileX)
+                    xLimits = new Tuple<int, int>(secondTileX, firstTileX);
+                else
+                    xLimits = new Tuple<int, int>(firstTileX, secondTileX);
+
+                if (firstTileY > secondTileY)
+                    yLimits = new Tuple<int, int>(secondTileY, firstTileY);
+                else
+                    yLimits = new Tuple<int, int>(firstTileY, secondTileY);
+
+                foreach (WrapPanel panelChild in mapGrid.Children)
+                {
+                    foreach (Rectangle rectangleChild in panelChild.Children)
                     {
-                        if (currentY >= yLimits.Item1 && currentY <= yLimits.Item2)
+                        // Get the TAG of the Rectangle (tag contains coordinates)
+                        String[] currentCoo = rectangleChild.Tag.ToString().Split('/');
+                        int currentX = int.Parse(currentCoo[0]);
+                        int currentY = int.Parse(currentCoo[1]);
+
+                        if (currentX >= xLimits.Item1 && currentX <= xLimits.Item2)
                         {
-                            rectangleChild.Fill = new SolidColorBrush(color);
-                            if (globalMap[currentX, currentY] == null)
-                                globalMap[currentX, currentY] = new tile();
-                            globalMap[currentX, currentY].tileColor = color;
+                            if (currentY >= yLimits.Item1 && currentY <= yLimits.Item2)
+                            {
+                                if (globalMap[currentX, currentY] == null)
+                                    globalMap[currentX, currentY] = new tile();
+                                rectangleChild.Fill = setRectangleColor(currentX, currentY);
+                            }
                         }
                     }
                 }
             }
+
+            firstTileX = -1;
+            firstTileY = -1;
+        }
+
+        // Define the tile's color
+        private SolidColorBrush setRectangleColor(int x, int y)
+        {
+            if (globalMap[x, y].tileColor == color)
+            {
+                globalMap[x, y] = null;
+                return (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF4F4F5"));
+            }
+            globalMap[x, y].tileColor = color;
+            return (new SolidColorBrush(color));
+        }
+
+        private void redButton_Click(object sender, RoutedEventArgs e)
+        {
+            color = Colors.Red;
+            selectedColor.Fill = new SolidColorBrush(color);
+        }
+
+        private void blueButton_Click(object sender, RoutedEventArgs e)
+        {
+            color = Colors.Blue;
+            selectedColor.Fill = new SolidColorBrush(color);
+        }
+
+        private void greenButton_Click(object sender, RoutedEventArgs e)
+        {
+            color = Colors.Green;
+            selectedColor.Fill = new SolidColorBrush(color);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace MapEditor
     public partial class MainWindow : Window
     {
         public const string defaultColor = "#FFF4F4F5";
-        public const string defaultColorFile = "colors.txt";
+        public const string defaultColorFile = "../colors.txt";
 
         public int mapWidth { get; set; }
         public int mapHeight { get; set; }

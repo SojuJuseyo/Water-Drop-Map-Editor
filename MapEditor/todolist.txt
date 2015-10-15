@@ -1,18 +1,6 @@
-﻿Fenêtre NewMap :
+﻿Done :
 
--> Binder la touche "Enter" afin de valider la fenêtre directement.
-
-Fenêtre MainWindow :
-
--> N'afficher le menu que lorsque la map est crée
-
-Ajouté cette semaine :
-
-Serialization.
-Le nom de la map est bien affiché.
-Nom par défaut du fichier lors de la sauvegarde.
-Vérification des inputs lors de la création de la nouvelle fenêtre.
-Séparateur entre la map et le menu de gauche.
-Possibilité de sélectionner plusieurs tiles d'un coup pour aller plus vite.
-Deset de la couleur au reclic.
-Preview de la couleur sélectionnée.
+Bug fix save a map not created.
+Format of the saved map changed.
+Load button from a file.
+Only display the menu when the map is created.

@@ -1,0 +1,3 @@
+Blue|#abcdef
+Green|#117050
+Red|#f93738

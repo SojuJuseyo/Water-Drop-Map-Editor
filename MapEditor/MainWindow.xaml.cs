@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -23,14 +24,20 @@ namespace MapEditor
     /// </summary>
     public partial class MainWindow : Window
     {
+        public const string defaultColor = "#FFF4F4F5";
+        public const string defaultColorFile = "colors.txt";
+
         public int mapWidth { get; set; }
         public int mapHeight { get; set; }
         public string mapName { get; set; }
         // To delete after (when there will be textures)
         public Color color { get; set; }
+        // To change after
+        public List<Color> usedColors = new List<Color>(); 
 
         public class tile
         {
+            [JsonIgnore]
             public Color tileColor { get; set; }
             public int coordx { get; set; }
             public int coordy { get; set; }
@@ -41,9 +48,9 @@ namespace MapEditor
         // Object that will be serialized for the JSON file creation
         public class MapInfos
         {
-            public string Name { get; set; }
-            public string Size { get; set; }
-            public List<tile> Tiles { get; set; }
+            public string name { get; set; }
+            public string size { get; set; }
+            public Dictionary<Color, List<tile>> tileList { get; set; }
         }
 
         public MainWindow()
@@ -58,15 +65,14 @@ namespace MapEditor
             createNewMapWindow.Owner = this;
             createNewMapWindow.ShowDialog();
 
-            // After the popup is closed
-            mapGrid.Children.Clear();
-            mapWidth = createNewMapWindow.xSize;
-            mapHeight = createNewMapWindow.ySize;
-            mapName = createNewMapWindow.mapName;
-            globalMap = new tile[mapWidth, mapHeight];
-
-            if (mapWidth > 0 && mapHeight > 0)
+            if (createNewMapWindow.xSize > 0 && createNewMapWindow.ySize > 0)
             {
+                // After the popup is closed
+                mapWidth = createNewMapWindow.xSize;
+                mapHeight = createNewMapWindow.ySize;
+                mapName = createNewMapWindow.mapName;
+                mapGrid.Children.Clear();
+                globalMap = new tile[mapWidth, mapHeight];
                 // Setting the mapName as the title of the window
                 this.Title = mapName;
                 // Deciding the size of the rectangles (tiles)
@@ -85,10 +91,45 @@ namespace MapEditor
                     }
                     mapGrid.Children.Add(panel);
                 }
+
+                loadButtonsFromFile();
             }
 
+            selectedColorLabel.Visibility = Visibility.Visible;
+            saveButton.IsEnabled = true;
             firstTileX = -1;
             firstTileY = -1;
+        }
+
+        // Load the buttons from a txt file
+        private void loadButtonsFromFile()
+        {
+            int i = 0;
+            string line;
+
+            if (File.Exists(defaultColorFile))
+            {
+                StreamReader file = new StreamReader(defaultColorFile);
+
+                WrapPanel panel = new WrapPanel();
+                while ((line = file.ReadLine()) != null)
+                {
+                    String[] extractedColor = line.Split('|');
+                    if (extractedColor.Length == 2)
+                    {
+                        if (isStringHexadecimal(extractedColor[1]))
+                        {
+                            Button newButton = new Button { Content = extractedColor[0], Tag = extractedColor[1], Width = 50, Height = 50, Margin = new Thickness(5, 5, 5, 0) };
+                            newButton.Click += coloredButton_Click;
+                            panel.Children.Add(newButton);
+                        }
+                    }
+                    i++;
+                }
+                colorsPanel.Children.Add(panel);
+
+                file.Close();
+            }
         }
 
         // To save a map
@@ -105,29 +146,38 @@ namespace MapEditor
 
             if (saveFilePopup.FileName != "")
             {
-                List<tile> tileList = new List<tile>();
-                for (int j = 0; j < mapHeight; j++)
+                Dictionary<Color, List<tile>> sortedTileList = new Dictionary<Color, List<tile>>();
+
+                foreach (Color tileColor in usedColors)
                 {
-                    for (int i = 0; i < mapWidth; i++)
+                    List<tile> singleColorTileList = new List<tile>();
+
+                    for (int j = 0; j < mapHeight; j++)
                     {
-                        if (globalMap[i, j] != null)
+                        for (int i = 0; i < mapWidth; i++)
                         {
-                            tileList.Add(new tile()
+                            if (globalMap[i, j] != null)
                             {
-                                tileColor = globalMap[i, j].tileColor,
-                                coordx = i,
-                                coordy = j
-                            });
+                                if (globalMap[i, j].tileColor == tileColor)
+                                {
+                                    singleColorTileList.Add(new tile()
+                                    {
+                                        coordx = i,
+                                        coordy = j
+                                    });
+                                }
+                            }
                         }
                     }
 
+                    sortedTileList.Add(tileColor, singleColorTileList);
                 }
 
                 MapInfos map = new MapInfos();
 
-                map.Name = mapName;
-                map.Size = mapWidth + "/" + mapHeight;
-                map.Tiles = tileList;
+                map.name = mapName;
+                map.size = mapWidth + "/" + mapHeight;
+                map.tileList = sortedTileList;
 
                 string json = JsonConvert.SerializeObject(map, Formatting.Indented);
                 System.IO.File.WriteAllText(saveFilePopup.FileName, json);
@@ -138,6 +188,12 @@ namespace MapEditor
         public string removeSpecialCharacters(string str)
         {
             return Regex.Replace(str, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
+        }
+
+        // Check the validity of an string (hexadecimal or not)
+        public bool isStringHexadecimal(string test)
+        {
+            return Regex.IsMatch(test, "^#(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$");
         }
 
         // Those variables are the coordinate of the rectangle on a MouseDown event
@@ -172,6 +228,9 @@ namespace MapEditor
                 if (globalMap[secondTileX, secondTileY] == null)
                     globalMap[secondTileX, secondTileY] = new tile();
                 ClickedRectangle.Fill = setRectangleColor(secondTileX, secondTileY);
+                // If the color was never used before, add it to the list of usedColors
+                if (usedColors.IndexOf(color) < 0)
+                    usedColors.Add(color);
             }
             else
             {
@@ -205,6 +264,9 @@ namespace MapEditor
                                 if (globalMap[currentX, currentY] == null)
                                     globalMap[currentX, currentY] = new tile();
                                 rectangleChild.Fill = setRectangleColor(currentX, currentY);
+                                // If the color was never used before, add it to the list of usedColors
+                                if (usedColors.IndexOf(color) < 0)
+                                    usedColors.Add(color);
                             }
                         }
                     }
@@ -221,28 +283,18 @@ namespace MapEditor
             if (globalMap[x, y].tileColor == color)
             {
                 globalMap[x, y] = null;
-                return (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF4F4F5"));
+                return (SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor));
             }
             globalMap[x, y].tileColor = color;
             return (new SolidColorBrush(color));
         }
 
-        private void redButton_Click(object sender, RoutedEventArgs e)
+        private void coloredButton_Click(object sender, RoutedEventArgs e)
         {
-            color = Colors.Red;
-            selectedColor.Fill = new SolidColorBrush(color);
-        }
+            Button ClickedButton = (Button)e.OriginalSource;
 
-        private void blueButton_Click(object sender, RoutedEventArgs e)
-        {
-            color = Colors.Blue;
-            selectedColor.Fill = new SolidColorBrush(color);
-        }
-
-        private void greenButton_Click(object sender, RoutedEventArgs e)
-        {
-            color = Colors.Green;
-            selectedColor.Fill = new SolidColorBrush(color);
+            color = (Color)ColorConverter.ConvertFromString(ClickedButton.Tag.ToString());
+            selectedColor.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom(ClickedButton.Tag.ToString());
         }
     }
 }

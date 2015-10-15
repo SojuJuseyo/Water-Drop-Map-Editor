@@ -39,13 +39,13 @@ namespace MapEditor
             if (!string.IsNullOrEmpty(xSizeTextBox.Text))
             {
                 xSize = int.Parse(xSizeTextBox.Text);
-                if (xSize == 0 || xSize > 50)
+                if (xSize <= 0 || xSize > 50)
                     xSizeTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
             }
             if (!string.IsNullOrEmpty(ySizeTextBox.Text))
             {
                 ySize = int.Parse(ySizeTextBox.Text);
-                if (ySize == 0 || ySize > 50)
+                if (ySize <= 0 || ySize > 50)
                     ySizeTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
             }
 

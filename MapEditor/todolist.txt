@@ -1,6 +1,4 @@
 ﻿Done :
 
-Bug fix save a map not created.
-Format of the saved map changed.
-Load button from a file.
-Only display the menu when the map is created.
+Le délimiteur n'est affiché qu'après création d'une map.
+Bind de la touche entrée sur la fenêtre de création d'une nouvelle map.

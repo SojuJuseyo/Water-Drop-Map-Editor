@@ -95,6 +95,7 @@ namespace MapEditor
                 loadButtonsFromFile();
             }
 
+            gridSplitter.Visibility = Visibility.Visible;
             selectedColorLabel.Visibility = Visibility.Visible;
             saveButton.IsEnabled = true;
             firstTileX = -1;

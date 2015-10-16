@@ -33,21 +33,36 @@ namespace MapEditor
         private void validateButton_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(mapNameTextBox.Text))
+            {
                 mapName = mapNameTextBox.Text;
+                mapNameTextBox.BorderBrush = new SolidColorBrush(Colors.DarkGreen);
+            }
             else
                 mapNameTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
+
             if (!string.IsNullOrEmpty(xSizeTextBox.Text))
             {
                 xSize = int.Parse(xSizeTextBox.Text);
                 if (xSize <= 0 || xSize > 50)
                     xSizeTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
+                else
+                    xSizeTextBox.BorderBrush = new SolidColorBrush(Colors.DarkGreen);
+
             }
+            else
+                xSizeTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
+
             if (!string.IsNullOrEmpty(ySizeTextBox.Text))
             {
                 ySize = int.Parse(ySizeTextBox.Text);
                 if (ySize <= 0 || ySize > 50)
                     ySizeTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
+                else
+                    ySizeTextBox.BorderBrush = new SolidColorBrush(Colors.DarkGreen);
+
             }
+            else
+                ySizeTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
 
             if (!string.IsNullOrEmpty(mapName) && xSize != 0 && ySize != 0)
                 this.Close();
@@ -67,6 +82,14 @@ namespace MapEditor
         {
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void keyPressed(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                validateButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            }
         }
     }
 }

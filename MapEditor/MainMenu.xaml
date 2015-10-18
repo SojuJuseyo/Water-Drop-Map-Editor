@@ -1,0 +1,16 @@
+﻿<Window x:Class="MapEditor.MainMenu"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MapEditor"
+        mc:Ignorable="d"
+        Title="Water Drop Project Map Editor" Height="200" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Button x:Name="createMapButton" Content="Create a &#xD;&#xA;new map" HorizontalAlignment="Left" Margin="10,59,0,0" VerticalAlignment="Top" Width="75" Height="40" Click="createMapButton_Click"/>
+        <Button x:Name="openMapButton" Content="Open a&#xD;&#xA;map" HorizontalAlignment="Left" Margin="104,59,0,0" VerticalAlignment="Top" Width="75" Height="40" Click="openMapButton_Click"/>
+        <Button x:Name="exitButton" Content="Exit the&#xD;&#xA;map editor&#xD;&#xA;" HorizontalAlignment="Left" Margin="202,59,0,0" VerticalAlignment="Top" Width="75" Height="40" Click="exitButton_Click"/>
+        <Label x:Name="label" Content="Si t'as des idées de design stp &#xD;&#xA;pour cette window&#xD;&#xA;" HorizontalAlignment="Left" Margin="10,18,0,0" VerticalAlignment="Top" Width="264"/>
+
+    </Grid>
+</Window>

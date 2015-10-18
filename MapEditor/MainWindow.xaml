@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MapEditor"
         mc:Ignorable="d"
-        Title="Water Drop Project Map Editor" Height="620" Width="1024" MinHeight="620" MinWidth="1024">
+        Title="Water Drop Project Map Editor" Height="620" Width="1024" MinHeight="620" MinWidth="1024" Loaded="MainWindow_Loaded">
     <Grid>
         <Menu DockPanel.Dock="Top" Margin="0" Height="25" VerticalAlignment="Top" BorderThickness="0,0,0,1" BorderBrush="#FF9C9898">
             <MenuItem Header="_File" Margin="0" Padding="7,2,8,6">
@@ -18,6 +18,7 @@
         <Label x:Name="selectedColorLabel" Content="Currently selected color :" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Height="35" Width="165" FontSize="14" FontStyle="Italic" VerticalContentAlignment="Center" Visibility="Hidden"/>
         <Rectangle x:Name="selectedColor" Fill="White" HorizontalAlignment="Left" Height="35" Margin="180,37,0,0" Stroke="#FFA6A4A4" VerticalAlignment="Top" Width="35" StrokeThickness="0"/>
         <StackPanel x:Name="colorsPanel" HorizontalAlignment="Left" Height="505" Margin="10,77,0,0" VerticalAlignment="Top" Width="425"/>
+        <Label x:Name="informations" Content="Welcome to the Water Drop Project Map Editor.&#xD;&#xA;&#xD;&#xA;As the editor isn't in its final version yet, feel free to give us feedback or to report any issues you could encounter at&#xD;&#xA;t.raballand@gmail.com&#xD;&#xA;&#xD;&#xA;- The Water Drop Project Team" HorizontalAlignment="Left" Margin="89,122,0,0" VerticalAlignment="Top" Height="172" Width="845" FontSize="16"/>
     </Grid>
 </Window>
     

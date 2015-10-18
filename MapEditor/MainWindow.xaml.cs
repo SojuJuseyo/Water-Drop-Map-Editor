@@ -67,6 +67,8 @@ namespace MapEditor
 
             if (createNewMapWindow.xSize > 0 && createNewMapWindow.ySize > 0)
             {
+                informations.Visibility = Visibility.Hidden;
+
                 // After the popup is closed
                 mapWidth = createNewMapWindow.xSize;
                 mapHeight = createNewMapWindow.ySize;
@@ -318,6 +320,32 @@ namespace MapEditor
 
             color = (Color)ColorConverter.ConvertFromString(ClickedButton.Tag.ToString());
             selectedColor.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom(ClickedButton.Tag.ToString());
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            MainMenu mainMenu = new MainMenu();
+
+            mainMenu.Owner = this;
+            mainMenu.ShowDialog();
+
+            switch (mainMenu.action)
+            {
+                case MainMenu.Action.CREATE:
+                    {
+                        newButton.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                        break;
+                    }
+                case MainMenu.Action.OPEN:
+                    {
+                        break;
+                    }
+                case MainMenu.Action.EXIT:
+                    {
+                        this.Close();
+                        break;
+                    }
+            }
         }
     }
 }

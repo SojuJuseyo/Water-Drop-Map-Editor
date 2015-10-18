@@ -25,7 +25,7 @@ namespace MapEditor
     public partial class MainWindow : Window
     {
         public const string defaultColor = "#FFF4F4F5";
-        public const string defaultColorFile = "../colors.txt";
+        public string defaultColorFile = "../settings.txt";
 
         public int mapWidth { get; set; }
         public int mapHeight { get; set; }
@@ -73,8 +73,10 @@ namespace MapEditor
                 mapName = createNewMapWindow.mapName;
                 mapGrid.Children.Clear();
                 globalMap = new tile[mapWidth, mapHeight];
+                
                 // Setting the mapName as the title of the window
                 this.Title = mapName;
+
                 // Deciding the size of the rectangles (tiles)
                 int tileSize = 0;
                 if (mapWidth > mapHeight)
@@ -92,12 +94,15 @@ namespace MapEditor
                     mapGrid.Children.Add(panel);
                 }
 
+                // Clear existing buttons
+                colorsPanel.Children.Clear();
+
                 loadButtonsFromFile();
+                gridSplitter.Visibility = Visibility.Visible;
+                selectedColorLabel.Visibility = Visibility.Visible;
+                saveButton.IsEnabled = true;
             }
 
-            gridSplitter.Visibility = Visibility.Visible;
-            selectedColorLabel.Visibility = Visibility.Visible;
-            saveButton.IsEnabled = true;
             firstTileX = -1;
             firstTileY = -1;
         }
@@ -130,6 +135,21 @@ namespace MapEditor
                 colorsPanel.Children.Add(panel);
 
                 file.Close();
+            }
+            else
+            {
+                NoConfigFilePopup popup = new NoConfigFilePopup();
+                string[] configFilePath = defaultColorFile.Split('/');
+
+                popup.setContent(configFilePath.Last());
+                popup.Owner = this;
+                popup.ShowDialog();
+
+                if (!string.IsNullOrEmpty(popup.fileName))
+                {
+                    defaultColorFile = popup.fileName;
+                    this.loadButtonsFromFile();
+                }
             }
         }
 
@@ -209,8 +229,10 @@ namespace MapEditor
             // Get the TAG of the Rectangle (tag contains coordinates)
             String[] coo = ClickedRectangle.Tag.ToString().Split('/');
             if (coo != null && coo.Length != 0)
-                firstTileX = int.Parse(coo[0]);
-            firstTileY = int.Parse(coo[1]);
+            {
+                firstTileX = int.Parse(coo.First());
+                firstTileY = int.Parse(coo.Last());
+            }
         }
 
         // Apply the texture to the tile(s)
@@ -220,8 +242,8 @@ namespace MapEditor
 
             // Get the TAG of the Rectangle (tag contains coordinates)
             String[] coo = ClickedRectangle.Tag.ToString().Split('/');
-            int secondTileX = int.Parse(coo[0]);
-            int secondTileY = int.Parse(coo[1]);
+            int secondTileX = int.Parse(coo.First());
+            int secondTileY = int.Parse(coo.Last());
 
             // Shortly : MouseDown outside of a rectangle and MouseUp on one
             if (firstTileX == -1 && firstTileY == -1)
@@ -255,8 +277,8 @@ namespace MapEditor
                     {
                         // Get the TAG of the Rectangle (tag contains coordinates)
                         String[] currentCoo = rectangleChild.Tag.ToString().Split('/');
-                        int currentX = int.Parse(currentCoo[0]);
-                        int currentY = int.Parse(currentCoo[1]);
+                        int currentX = int.Parse(currentCoo.First());
+                        int currentY = int.Parse(currentCoo.Last());
 
                         if (currentX >= xLimits.Item1 && currentX <= xLimits.Item2)
                         {

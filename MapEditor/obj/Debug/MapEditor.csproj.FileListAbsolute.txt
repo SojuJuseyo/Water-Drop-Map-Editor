@@ -32,3 +32,5 @@ C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MapEditor.Properties.R
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MapEditor.csproj.GenerateResource.Cache
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\bin\Debug\Newtonsoft.Json.dll
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\NoConfigFilePopup.g.cs
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\NoConfigFilePopup.baml

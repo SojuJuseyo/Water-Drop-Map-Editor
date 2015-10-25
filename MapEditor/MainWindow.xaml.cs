@@ -33,7 +33,7 @@ namespace MapEditor
         // To delete after (when there will be textures)
         public Color color { get; set; }
         // To change after
-        public List<Color> usedColors = new List<Color>(); 
+        public List<Color> usedColors = new List<Color>();
 
         public class tile
         {
@@ -155,6 +155,103 @@ namespace MapEditor
             }
         }
 
+        // Open an existing JSON saved map
+        private void MenuFileNew_Open(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFilePopup = new OpenFileDialog();
+
+            openFilePopup.DefaultExt = ".json";
+            openFilePopup.Filter = "JSON documents (.json)|*.json";
+            openFilePopup.Title = "Open a map";
+            openFilePopup.ShowDialog();
+
+            if (openFilePopup.FileName != "")
+            {
+                MapInfos loadedMap = JsonConvert.DeserializeObject<MapInfos>(File.ReadAllText(openFilePopup.FileName));
+
+                // Hide the message displayed at the opening of the map editor
+                informations.Visibility = Visibility.Hidden;
+
+                // Loading the informations from the deserialized object
+                String[] size = loadedMap.size.Split('/');
+                mapWidth = int.Parse(size.First());
+                mapHeight = int.Parse(size.Last());
+                mapName = loadedMap.name;
+
+                // Clear the potential already existing map
+                mapGrid.Children.Clear();
+
+                globalMap = new tile[mapWidth, mapHeight];
+
+                // Setting the mapName as the title of the window
+                this.Title = mapName;
+
+                // Deciding the size of the rectangles (tiles)
+                int tileSize = 0;
+                if (mapWidth > mapHeight)
+                    tileSize = (550 - mapWidth * 2) / (mapWidth);
+                else
+                    tileSize = (550 - mapHeight * 2) / (mapHeight);
+
+                for (int j = 0; j < mapHeight; j++)
+                {
+                    WrapPanel panel = new WrapPanel();
+                    for (int i = 0; i < mapWidth; i++)
+                    {
+                        panel.Children.Add(new Rectangle { Tag = i + "/" + j, Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFF4F4F5"), Stroke = new SolidColorBrush(Colors.Black), RadiusX = 10, RadiusY = 10, Margin = new Thickness(0, 2, 2, 0) });
+                    }
+                    mapGrid.Children.Add(panel);
+                }
+
+                // Re-set the values to the globalMap
+                foreach (var list in loadedMap.tileList)
+                {
+                    var tileColor = list.Key;
+                    var tileList = list.Value;
+
+                    foreach (tile elem in tileList)
+                    {
+                        tile newTile = new tile();
+                        newTile.coordx = elem.coordx;
+                        newTile.coordy = elem.coordy;
+                        newTile.tileColor = tileColor;
+
+                        globalMap[elem.coordx, elem.coordy] = newTile;
+                    }
+                }
+
+                // Reapply the colors to the map
+                foreach (WrapPanel panelChild in mapGrid.Children)
+                {
+                    foreach (Rectangle rectangleChild in panelChild.Children)
+                    {
+                        // Get the TAG of the Rectangle (tag contains coordinates)
+                        String[] currentCoo = rectangleChild.Tag.ToString().Split('/');
+                        int currentX = int.Parse(currentCoo.First());
+                        int currentY = int.Parse(currentCoo.Last());
+
+                        if (globalMap[currentX, currentY] != null)
+                        {
+                            if (usedColors.IndexOf(globalMap[currentX, currentY].tileColor) < 0)
+                                usedColors.Add(globalMap[currentX, currentY].tileColor);
+                            rectangleChild.Fill = new SolidColorBrush(globalMap[currentX, currentY].tileColor);
+                        }
+                    }
+                }
+
+                // Clear existing buttons
+                colorsPanel.Children.Clear();
+
+                loadButtonsFromFile();
+                gridSplitter.Visibility = Visibility.Visible;
+                selectedColorLabel.Visibility = Visibility.Visible;
+                saveButton.IsEnabled = true;
+
+                firstTileX = -1;
+                firstTileY = -1;
+            }
+        }
+
         // To save a map
         private void MenuFileNew_Save(object sender, RoutedEventArgs e)
         {
@@ -173,7 +270,7 @@ namespace MapEditor
 
                 foreach (Color tileColor in usedColors)
                 {
-                    List<tile> singleColorTileList = new List<tile>();
+                    List<tile> singleColorTileList = new List<tile>();                    
 
                     for (int j = 0; j < mapHeight; j++)
                     {
@@ -203,7 +300,7 @@ namespace MapEditor
                 map.tileList = sortedTileList;
 
                 string json = JsonConvert.SerializeObject(map, Formatting.Indented);
-                System.IO.File.WriteAllText(saveFilePopup.FileName, json);
+                File.WriteAllText(saveFilePopup.FileName, json);
             }
         }
 
@@ -322,6 +419,7 @@ namespace MapEditor
             selectedColor.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom(ClickedButton.Tag.ToString());
         }
 
+        // Display a menu to chose between creating a new map or loading an existing saved one
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             MainMenu mainMenu = new MainMenu();
@@ -338,6 +436,7 @@ namespace MapEditor
                     }
                 case MainMenu.Action.OPEN:
                     {
+                        openButton.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
                         break;
                     }
                 case MainMenu.Action.EXIT:
@@ -345,7 +444,12 @@ namespace MapEditor
                         this.Close();
                         break;
                     }
+                case MainMenu.Action.NOTHING:
+                    {
+                        break;
+                    }
             }
         }
+
     }
 }

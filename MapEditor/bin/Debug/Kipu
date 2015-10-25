@@ -1,0 +1,165 @@
+{
+  "name": "Kipu",
+  "size": "20/20",
+  "tileList": {
+    "#FFABCDEF": [
+      {
+        "coordx": 0,
+        "coordy": 0
+      },
+      {
+        "coordx": 1,
+        "coordy": 0
+      },
+      {
+        "coordx": 2,
+        "coordy": 0
+      },
+      {
+        "coordx": 3,
+        "coordy": 0
+      },
+      {
+        "coordx": 4,
+        "coordy": 0
+      },
+      {
+        "coordx": 5,
+        "coordy": 0
+      }
+    ],
+    "#FF117050": [
+      {
+        "coordx": 0,
+        "coordy": 1
+      },
+      {
+        "coordx": 1,
+        "coordy": 1
+      },
+      {
+        "coordx": 2,
+        "coordy": 1
+      },
+      {
+        "coordx": 3,
+        "coordy": 1
+      },
+      {
+        "coordx": 4,
+        "coordy": 1
+      },
+      {
+        "coordx": 5,
+        "coordy": 1
+      },
+      {
+        "coordx": 0,
+        "coordy": 2
+      },
+      {
+        "coordx": 1,
+        "coordy": 2
+      },
+      {
+        "coordx": 2,
+        "coordy": 2
+      },
+      {
+        "coordx": 3,
+        "coordy": 2
+      },
+      {
+        "coordx": 4,
+        "coordy": 2
+      },
+      {
+        "coordx": 5,
+        "coordy": 2
+      },
+      {
+        "coordx": 0,
+        "coordy": 3
+      },
+      {
+        "coordx": 1,
+        "coordy": 3
+      },
+      {
+        "coordx": 2,
+        "coordy": 3
+      },
+      {
+        "coordx": 4,
+        "coordy": 3
+      },
+      {
+        "coordx": 5,
+        "coordy": 3
+      },
+      {
+        "coordx": 0,
+        "coordy": 4
+      },
+      {
+        "coordx": 1,
+        "coordy": 4
+      },
+      {
+        "coordx": 2,
+        "coordy": 4
+      },
+      {
+        "coordx": 3,
+        "coordy": 4
+      },
+      {
+        "coordx": 4,
+        "coordy": 4
+      },
+      {
+        "coordx": 5,
+        "coordy": 4
+      },
+      {
+        "coordx": 0,
+        "coordy": 5
+      },
+      {
+        "coordx": 1,
+        "coordy": 5
+      },
+      {
+        "coordx": 2,
+        "coordy": 5
+      },
+      {
+        "coordx": 3,
+        "coordy": 5
+      },
+      {
+        "coordx": 4,
+        "coordy": 5
+      },
+      {
+        "coordx": 5,
+        "coordy": 5
+      }
+    ],
+    "#FFF93738": [
+      {
+        "coordx": 3,
+        "coordy": 3
+      },
+      {
+        "coordx": 0,
+        "coordy": 6
+      },
+      {
+        "coordx": 1,
+        "coordy": 6
+      }
+    ],
+    "#00000000": []
+  }
+}

@@ -23,10 +23,13 @@ namespace MapEditor
         {
             CREATE,
             OPEN,
-            EXIT
+            EXIT,
+            NOTHING
         }
 
         public Action action { get; set; }
+        // Manual way of doing magical stuff
+        public Boolean isClosing { get; set; }
 
         public MainMenu()
         {
@@ -35,20 +38,29 @@ namespace MapEditor
 
         private void createMapButton_Click(object sender, RoutedEventArgs e)
         {
+            isClosing = true;
             action = Action.CREATE;
             this.Close();
         }
 
         private void openMapButton_Click(object sender, RoutedEventArgs e)
         {
+            isClosing = true;
             action = Action.OPEN;
             this.Close();
         }
 
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
+            isClosing = true;
             action = Action.EXIT;
             this.Close();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (isClosing == false)
+                action = Action.NOTHING;
         }
     }
 }

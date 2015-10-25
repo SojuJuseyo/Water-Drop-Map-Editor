@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MapEditor"
         mc:Ignorable="d"
-        Title="Water Drop Project Map Editor" Height="200" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+        Title="Water Drop Project Map Editor" Height="200" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Closing="Window_Closing">
     <Grid>
         <Button x:Name="createMapButton" Content="Create a &#xD;&#xA;new map" HorizontalAlignment="Left" Margin="10,59,0,0" VerticalAlignment="Top" Width="75" Height="40" Click="createMapButton_Click"/>
         <Button x:Name="openMapButton" Content="Open a&#xD;&#xA;map" HorizontalAlignment="Left" Margin="104,59,0,0" VerticalAlignment="Top" Width="75" Height="40" Click="openMapButton_Click"/>

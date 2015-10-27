@@ -109,56 +109,12 @@ namespace MapEditor
             firstTileY = -1;
         }
 
-        // Load the buttons from a txt file
-        private void loadButtonsFromFile()
-        {
-            int i = 0;
-            string line;
-
-            if (File.Exists(defaultColorFile))
-            {
-                StreamReader file = new StreamReader(defaultColorFile);
-
-                WrapPanel panel = new WrapPanel();
-                while ((line = file.ReadLine()) != null)
-                {
-                    String[] extractedColor = line.Split('|');
-                    if (extractedColor.Length == 2)
-                    {
-                        if (isStringHexadecimal(extractedColor[1]))
-                        {
-                            Button newButton = new Button { Content = extractedColor[0], Tag = extractedColor[1], Width = 50, Height = 50, Margin = new Thickness(5, 5, 5, 0) };
-                            newButton.Click += coloredButton_Click;
-                            panel.Children.Add(newButton);
-                        }
-                    }
-                    i++;
-                }
-                colorsPanel.Children.Add(panel);
-
-                file.Close();
-            }
-            else
-            {
-                NoConfigFilePopup popup = new NoConfigFilePopup();
-                string[] configFilePath = defaultColorFile.Split('/');
-
-                popup.setContent(configFilePath.Last());
-                popup.Owner = this;
-                popup.ShowDialog();
-
-                if (!string.IsNullOrEmpty(popup.fileName))
-                {
-                    defaultColorFile = popup.fileName;
-                    this.loadButtonsFromFile();
-                }
-            }
-        }
-
         // Open an existing JSON saved map
         private void MenuFileNew_Open(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFilePopup = new OpenFileDialog();
+            int newMapWidth, newMapHeight, tileSize = 0;
+            string newMapName;
 
             openFilePopup.DefaultExt = ".json";
             openFilePopup.Filter = "JSON documents (.json)|*.json";
@@ -168,18 +124,62 @@ namespace MapEditor
             if (openFilePopup.FileName != "")
             {
                 MapInfos loadedMap = JsonConvert.DeserializeObject<MapInfos>(File.ReadAllText(openFilePopup.FileName));
+                tile[,] newGlobalMap;
 
                 // Loading the informations from the deserialized object
                 try
                 {
                     String[] size = loadedMap.size.Split('/');
 
-                    mapWidth = int.Parse(size.First());
-                    mapHeight = int.Parse(size.Last());
-                    mapName = loadedMap.name;
+                    newMapWidth = int.Parse(size.First());
+                    newMapHeight = int.Parse(size.Last());
+                    newMapName = loadedMap.name;
+
+                    newGlobalMap = new tile[newMapWidth, newMapHeight];
+
+                    // Deciding the size of the rectangles (tiles)
+                    if (newMapWidth > newMapHeight)
+                        tileSize = (550 - newMapWidth * 2) / (newMapWidth);
+                    else
+                        tileSize = (550 - newMapHeight * 2) / (newMapHeight);
+
+                    foreach (var list in loadedMap.tileList)
+                    {
+                        var tileColor = list.Key;
+                        var tileList = list.Value;
+
+                        foreach (tile elem in tileList)
+                        {
+                            tile newTile = new tile();
+                            newTile.coordx = elem.coordx;
+                            newTile.coordy = elem.coordy;
+                            newTile.tileColor = tileColor;
+
+                            newGlobalMap[elem.coordx, elem.coordy] = newTile;
+                        }
+                    }
+
+                    // Re-set the values to the globalMap
+                    foreach (var list in loadedMap.tileList)
+                    {
+                        var tileColor = list.Key;
+                        var tileList = list.Value;
+
+                        foreach (tile elem in tileList)
+                        {
+                            tile newTile = new tile();
+                            newTile.coordx = elem.coordx;
+                            newTile.coordy = elem.coordy;
+                            newTile.tileColor = tileColor;
+
+                            newGlobalMap[elem.coordx, elem.coordy] = newTile;
+                        }
+                    }
+
                 }
-                catch (Exception)
+                catch (Exception exc)
                 {
+                    Console.WriteLine(exc.ToString());
                     GenericErrorPopup errorPopup = new GenericErrorPopup();
 
                     errorPopup.setErrorMessage("Error opening a map", "The map you're trying to open is corrupted.");
@@ -188,21 +188,18 @@ namespace MapEditor
                     return;
                 }
 
+                globalMap = newGlobalMap;
+                mapName = newMapName;
+                mapHeight = newMapHeight;
+                mapWidth = newMapWidth;
+
+                // Setting the mapName as the title of the window
+                this.Title = newMapName;
+
                 // Clear the potential already existing map
                 mapGrid.Children.Clear();
 
-                globalMap = new tile[mapWidth, mapHeight];
-
-                // Setting the mapName as the title of the window
-                this.Title = mapName;
-
-                // Deciding the size of the rectangles (tiles)
-                int tileSize = 0;
-                if (mapWidth > mapHeight)
-                    tileSize = (550 - mapWidth * 2) / (mapWidth);
-                else
-                    tileSize = (550 - mapHeight * 2) / (mapHeight);
-
+                // Reapply the colors to the map
                 for (int j = 0; j < mapHeight; j++)
                 {
                     WrapPanel panel = new WrapPanel();
@@ -213,24 +210,6 @@ namespace MapEditor
                     mapGrid.Children.Add(panel);
                 }
 
-                // Re-set the values to the globalMap
-                foreach (var list in loadedMap.tileList)
-                {
-                    var tileColor = list.Key;
-                    var tileList = list.Value;
-
-                    foreach (tile elem in tileList)
-                    {
-                        tile newTile = new tile();
-                        newTile.coordx = elem.coordx;
-                        newTile.coordy = elem.coordy;
-                        newTile.tileColor = tileColor;
-
-                        globalMap[elem.coordx, elem.coordy] = newTile;
-                    }
-                }
-
-                // Reapply the colors to the map
                 foreach (WrapPanel panelChild in mapGrid.Children)
                 {
                     foreach (Rectangle rectangleChild in panelChild.Children)
@@ -240,7 +219,7 @@ namespace MapEditor
                         int currentX = int.Parse(currentCoo.First());
                         int currentY = int.Parse(currentCoo.Last());
 
-                        if (globalMap[currentX, currentY] != null)
+                        if (newGlobalMap[currentX, currentY] != null)
                         {
                             if (usedColors.IndexOf(globalMap[currentX, currentY].tileColor) < 0)
                                 usedColors.Add(globalMap[currentX, currentY].tileColor);
@@ -314,6 +293,52 @@ namespace MapEditor
 
                 string json = JsonConvert.SerializeObject(map, Formatting.Indented);
                 File.WriteAllText(saveFilePopup.FileName, json);
+            }
+        }
+
+        // Load the buttons from a txt file
+        private void loadButtonsFromFile()
+        {
+            int i = 0;
+            string line;
+
+            if (File.Exists(defaultColorFile))
+            {
+                StreamReader file = new StreamReader(defaultColorFile);
+
+                WrapPanel panel = new WrapPanel();
+                while ((line = file.ReadLine()) != null)
+                {
+                    String[] extractedColor = line.Split('|');
+                    if (extractedColor.Length == 2)
+                    {
+                        if (isStringHexadecimal(extractedColor[1]))
+                        {
+                            Button newButton = new Button { Content = extractedColor[0], Tag = extractedColor[1], Width = 50, Height = 50, Margin = new Thickness(5, 5, 5, 0) };
+                            newButton.Click += coloredButton_Click;
+                            panel.Children.Add(newButton);
+                        }
+                    }
+                    i++;
+                }
+                colorsPanel.Children.Add(panel);
+
+                file.Close();
+            }
+            else
+            {
+                NoConfigFilePopup popup = new NoConfigFilePopup();
+                string[] configFilePath = defaultColorFile.Split('/');
+
+                popup.setContent(configFilePath.Last());
+                popup.Owner = this;
+                popup.ShowDialog();
+
+                if (!string.IsNullOrEmpty(popup.fileName))
+                {
+                    defaultColorFile = popup.fileName;
+                    this.loadButtonsFromFile();
+                }
             }
         }
 

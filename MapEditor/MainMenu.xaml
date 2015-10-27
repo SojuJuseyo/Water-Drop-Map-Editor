@@ -7,10 +7,12 @@
         mc:Ignorable="d"
         Title="Water Drop Project Map Editor" Height="200" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Closing="Window_Closing">
     <Grid>
-        <Button x:Name="createMapButton" Content="Create a &#xD;&#xA;new map" HorizontalAlignment="Left" Margin="10,59,0,0" VerticalAlignment="Top" Width="75" Height="40" Click="createMapButton_Click"/>
-        <Button x:Name="openMapButton" Content="Open a&#xD;&#xA;map" HorizontalAlignment="Left" Margin="104,59,0,0" VerticalAlignment="Top" Width="75" Height="40" Click="openMapButton_Click"/>
-        <Button x:Name="exitButton" Content="Exit the&#xD;&#xA;map editor&#xD;&#xA;" HorizontalAlignment="Left" Margin="202,59,0,0" VerticalAlignment="Top" Width="75" Height="40" Click="exitButton_Click"/>
-        <Label x:Name="label" Content="Si t'as des idées de design stp &#xD;&#xA;pour cette window&#xD;&#xA;" HorizontalAlignment="Left" Margin="10,18,0,0" VerticalAlignment="Top" Width="264"/>
+        <Button x:Name="createMapButton" Content="-&gt;" HorizontalAlignment="Left" Margin="184,18,0,0" VerticalAlignment="Top" Width="60" Height="30" Click="createMapButton_Click"/>
+        <Button x:Name="openMapButton" Content="-&gt;" HorizontalAlignment="Left" Margin="184,65,0,0" VerticalAlignment="Top" Width="60" Height="30" Click="openMapButton_Click"/>
+        <Button x:Name="exitButton" Content="-&gt;&#xA;" HorizontalAlignment="Left" Margin="184,115,0,0" VerticalAlignment="Top" Width="60" Height="30" Click="exitButton_Click"/>
+        <Label x:Name="label" Content="Create a new map" HorizontalAlignment="Left" Margin="43,18,0,0" VerticalAlignment="Top" Width="136"/>
+        <Label x:Name="label_Copy" Content="Open a new map" HorizontalAlignment="Left" Margin="43,67,0,0" VerticalAlignment="Top" Width="136"/>
+        <Label x:Name="label_Copy1" Content="Exit the map editor" HorizontalAlignment="Left" Margin="43,115,0,0" VerticalAlignment="Top" Width="136"/>
 
     </Grid>
 </Window>

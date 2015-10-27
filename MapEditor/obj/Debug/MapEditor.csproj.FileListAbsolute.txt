@@ -36,3 +36,5 @@ C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\NoConfigFilePopup.g.cs
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\NoConfigFilePopup.baml
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MainMenu.g.cs
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MainMenu.baml
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\GenericErrorPopup.g.cs
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\GenericErrorPopup.baml

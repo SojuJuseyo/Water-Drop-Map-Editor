@@ -169,14 +169,24 @@ namespace MapEditor
             {
                 MapInfos loadedMap = JsonConvert.DeserializeObject<MapInfos>(File.ReadAllText(openFilePopup.FileName));
 
-                // Hide the message displayed at the opening of the map editor
-                informations.Visibility = Visibility.Hidden;
-
                 // Loading the informations from the deserialized object
-                String[] size = loadedMap.size.Split('/');
-                mapWidth = int.Parse(size.First());
-                mapHeight = int.Parse(size.Last());
-                mapName = loadedMap.name;
+                try
+                {
+                    String[] size = loadedMap.size.Split('/');
+
+                    mapWidth = int.Parse(size.First());
+                    mapHeight = int.Parse(size.Last());
+                    mapName = loadedMap.name;
+                }
+                catch (Exception)
+                {
+                    GenericErrorPopup errorPopup = new GenericErrorPopup();
+
+                    errorPopup.setErrorMessage("Error opening a map", "The map you're trying to open is corrupted.");
+                    errorPopup.Owner = this;
+                    errorPopup.ShowDialog();
+                    return;
+                }
 
                 // Clear the potential already existing map
                 mapGrid.Children.Clear();
@@ -238,6 +248,9 @@ namespace MapEditor
                         }
                     }
                 }
+
+                // Hide the message displayed at the opening of the map editor
+                informations.Visibility = Visibility.Hidden;
 
                 // Clear existing buttons
                 colorsPanel.Children.Clear();

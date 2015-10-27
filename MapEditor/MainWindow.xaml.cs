@@ -193,8 +193,11 @@ namespace MapEditor
                 mapHeight = newMapHeight;
                 mapWidth = newMapWidth;
 
-                // Setting the mapName as the title of the window
-                this.Title = newMapName;
+                try {
+                    // Setting the mapName as the title of the window
+                    this.Title = newMapName;
+                }
+                catch (Exception) { }
 
                 // Clear the potential already existing map
                 mapGrid.Children.Clear();

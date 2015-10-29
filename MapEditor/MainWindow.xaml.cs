@@ -123,12 +123,14 @@ namespace MapEditor
 
             if (openFilePopup.FileName != "")
             {
-                MapInfos loadedMap = JsonConvert.DeserializeObject<MapInfos>(File.ReadAllText(openFilePopup.FileName));
                 tile[,] newGlobalMap;
 
-                // Loading the informations from the deserialized object
+                // Error handling
                 try
                 {
+                    MapInfos loadedMap = JsonConvert.DeserializeObject<MapInfos>(File.ReadAllText(openFilePopup.FileName));
+
+                    // Loading the informations from the deserialized object
                     String[] size = loadedMap.size.Split('/');
 
                     newMapWidth = int.Parse(size.First());
@@ -177,9 +179,8 @@ namespace MapEditor
                     }
 
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
-                    Console.WriteLine(exc.ToString());
                     GenericErrorPopup errorPopup = new GenericErrorPopup();
 
                     errorPopup.setErrorMessage("Error opening a map", "The map you're trying to open is corrupted.");

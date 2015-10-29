@@ -1,4 +1,0 @@
-﻿Done :
-
-Le délimiteur n'est affiché qu'après création d'une map.
-Bind de la touche entrée sur la fenêtre de création d'une nouvelle map.

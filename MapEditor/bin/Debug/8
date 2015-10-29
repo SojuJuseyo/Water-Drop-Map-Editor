@@ -1,0 +1,108 @@
+{
+  "name": "8",
+  "size": "8/8",
+  "tileList": {
+    "#FFF93738": [
+      {
+        "coordx": 0,
+        "coordy": 1
+      },
+      {
+        "coordx": 3,
+        "coordy": 1
+      },
+      {
+        "coordx": 4,
+        "coordy": 1
+      },
+      {
+        "coordx": 5,
+        "coordy": 1
+      },
+      {
+        "coordx": 6,
+        "coordy": 1
+      },
+      {
+        "coordx": 2,
+        "coordy": 3
+      }
+    ],
+    "#FF117050": [
+      {
+        "coordx": 1,
+        "coordy": 1
+      }
+    ],
+    "#FFABCDEF": [
+      {
+        "coordx": 0,
+        "coordy": 2
+      },
+      {
+        "coordx": 2,
+        "coordy": 2
+      },
+      {
+        "coordx": 1,
+        "coordy": 4
+      },
+      {
+        "coordx": 2,
+        "coordy": 4
+      },
+      {
+        "coordx": 3,
+        "coordy": 4
+      },
+      {
+        "coordx": 4,
+        "coordy": 4
+      },
+      {
+        "coordx": 5,
+        "coordy": 4
+      },
+      {
+        "coordx": 1,
+        "coordy": 5
+      },
+      {
+        "coordx": 2,
+        "coordy": 5
+      },
+      {
+        "coordx": 3,
+        "coordy": 5
+      },
+      {
+        "coordx": 4,
+        "coordy": 5
+      },
+      {
+        "coordx": 5,
+        "coordy": 5
+      },
+      {
+        "coordx": 1,
+        "coordy": 6
+      },
+      {
+        "coordx": 2,
+        "coordy": 6
+      },
+      {
+        "coordx": 3,
+        "coordy": 6
+      },
+      {
+        "coordx": 4,
+        "coordy": 6
+      },
+      {
+        "coordx": 5,
+        "coordy": 6
+      }
+    ]
+  }
+}

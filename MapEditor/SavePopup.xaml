@@ -1,0 +1,19 @@
+﻿<Window x:Class="MapEditor.SavePopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MapEditor"
+        mc:Ignorable="d"
+        Title="Save your map" Height="200" Width="300" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <Grid>
+        <Label x:Name="saveLabel" Content="Your map has unsaved changes !&#xD;&#xA;Save your map ?" HorizontalAlignment="Left" Margin="10,27,0,0" VerticalAlignment="Top" Height="44" Width="260" FontSize="13" FontWeight="Medium" HorizontalContentAlignment="Center"/>
+        <Button x:Name="saveButton" Content="Save" HorizontalAlignment="Left" Margin="109,121,0,0" VerticalAlignment="Top" Width="75" Height="30" Click="saveButton_Click"/>
+        <Button x:Name="exitButton" Content="Exit" HorizontalAlignment="Left" Margin="194,121,0,0" VerticalAlignment="Top" Width="75" Height="30" Click="exitButton_Click"/>
+        <Label x:Name="currentLocationLabel" HorizontalAlignment="Left" Margin="10,80,0,0" VerticalAlignment="Top" Height="28" Width="260" FontSize="11" FontWeight="Medium" HorizontalContentAlignment="Center">
+            <TextBlock x:Name="currentLocationTextBlock" TextTrimming="CharacterEllipsis" ></TextBlock>
+        </Label>
+        <Button x:Name="changeButton" Content="Change path" HorizontalAlignment="Left" Margin="25,121,0,0" VerticalAlignment="Top" Width="75" Height="30" Click="changeButton_Click"/>
+
+    </Grid>
+</Window>

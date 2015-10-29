@@ -27,6 +27,10 @@ namespace MapEditor
         public const string defaultColor = "#FFF4F4F5";
         public string defaultColorFile = "../settings.txt";
 
+        // Useful variable to determine when to trigger the save popup
+        public string lastSavePath { get; set; }
+        public bool hasBeenModified { get; set; }
+
         public int mapWidth { get; set; }
         public int mapHeight { get; set; }
         public string mapName { get; set; }
@@ -34,6 +38,10 @@ namespace MapEditor
         public Color color { get; set; }
         // To change after
         public List<Color> usedColors = new List<Color>();
+
+        // Those variables are the coordinate of the rectangle on a MouseDown event
+        public int firstTileX { get; set; }
+        public int firstTileY { get; set; }
 
         public class tile
         {
@@ -103,6 +111,7 @@ namespace MapEditor
                 gridSplitter.Visibility = Visibility.Visible;
                 selectedColorLabel.Visibility = Visibility.Visible;
                 saveButton.IsEnabled = true;
+                lastSavePath = null;
             }
 
             firstTileX = -1;
@@ -242,6 +251,7 @@ namespace MapEditor
                 gridSplitter.Visibility = Visibility.Visible;
                 selectedColorLabel.Visibility = Visibility.Visible;
                 saveButton.IsEnabled = true;
+                lastSavePath = openFilePopup.FileName;
 
                 firstTileX = -1;
                 firstTileY = -1;
@@ -254,14 +264,21 @@ namespace MapEditor
             // Popup to select the location of the file
             SaveFileDialog saveFilePopup = new SaveFileDialog();
 
-            saveFilePopup.DefaultExt = ".json";
-            saveFilePopup.Filter = "JSON documents (.json)|*.json";
-            saveFilePopup.Title = "Save your map";
-            saveFilePopup.FileName = removeSpecialCharacters(mapName);
-            saveFilePopup.ShowDialog();
+            string savePath;
 
-            if (saveFilePopup.FileName != "")
+            if (String.IsNullOrEmpty(lastSavePath))
             {
+                saveFilePopup.DefaultExt = ".json";
+                saveFilePopup.Filter = "JSON documents (.json)|*.json";
+                saveFilePopup.Title = "Save your map";
+                saveFilePopup.FileName = removeSpecialCharacters(mapName);
+                saveFilePopup.ShowDialog();
+            }
+
+            if (saveFilePopup.FileName != "" || !String.IsNullOrEmpty(lastSavePath))
+            {
+                savePath = (saveFilePopup.FileName != "" ? saveFilePopup.FileName : lastSavePath);
+
                 Dictionary<Color, List<tile>> sortedTileList = new Dictionary<Color, List<tile>>();
 
                 foreach (Color tileColor in usedColors)
@@ -296,7 +313,10 @@ namespace MapEditor
                 map.tileList = sortedTileList;
 
                 string json = JsonConvert.SerializeObject(map, Formatting.Indented);
-                File.WriteAllText(saveFilePopup.FileName, json);
+                File.WriteAllText(savePath, json);
+
+                lastSavePath = savePath;
+                hasBeenModified = false;
             }
         }
 
@@ -357,10 +377,6 @@ namespace MapEditor
         {
             return Regex.IsMatch(test, "^#(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$");
         }
-
-        // Those variables are the coordinate of the rectangle on a MouseDown event
-        public int firstTileX { get; set; }
-        public int firstTileY { get; set; }
 
         // Get the coordinates of the tile selected (or the first tile if multiple tiles are selected)
         private void setTileTexture(object sender, MouseButtonEventArgs e)
@@ -439,6 +455,7 @@ namespace MapEditor
 
             firstTileX = -1;
             firstTileY = -1;
+            hasBeenModified = true;
         }
 
         // Define the tile's color
@@ -493,5 +510,31 @@ namespace MapEditor
             }
         }
 
+        private void editorClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (hasBeenModified == true)
+            {
+                SavePopup savePopup = new SavePopup();
+
+                savePopup.setCurrentLocation(lastSavePath);
+                savePopup.Owner = this;
+                savePopup.ShowDialog();
+
+                switch (savePopup.action)
+                {
+                    case SavePopup.Action.CHANGEPATH:
+                        {
+                            lastSavePath = null;
+                            saveButton.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                            break;
+                        }
+                    case SavePopup.Action.SAVE:
+                        {
+                            saveButton.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                            break;
+                        }
+                }
+            }
+        }
     }
 }

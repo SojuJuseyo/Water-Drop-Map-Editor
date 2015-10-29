@@ -22,3 +22,5 @@ C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Release\NoConfigFilePopup.g.
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Release\GenericErrorPopup.baml
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Release\MainMenu.baml
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Release\NoConfigFilePopup.baml
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Release\SavePopup.g.cs
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Release\SavePopup.baml

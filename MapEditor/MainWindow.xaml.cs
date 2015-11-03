@@ -270,7 +270,10 @@ namespace MapEditor
                 saveFilePopup.Title = "Save your map";
                 saveFilePopup.FileName = removeSpecialCharacters(mapName);
                 if (saveFilePopup.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+                {
                     cancelExit = true;
+                    return;
+                }
             }
 
             if (saveFilePopup.FileName != "" || !String.IsNullOrEmpty(lastSavePath))

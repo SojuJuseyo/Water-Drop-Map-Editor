@@ -1,0 +1,18 @@
+{
+  "name": "50",
+  "size": "50/50",
+  "tileList": {
+    "#FF117050": [
+      {
+        "coordx": 0,
+        "coordy": 6
+      }
+    ],
+    "#FFF93738": [
+      {
+        "coordx": 0,
+        "coordy": 7
+      }
+    ]
+  }
+}

@@ -11,7 +11,7 @@
         <Button x:Name="openMapButton" Content="-&gt;" HorizontalAlignment="Left" Margin="184,65,0,0" VerticalAlignment="Top" Width="60" Height="30" Click="openMapButton_Click"/>
         <Button x:Name="exitButton" Content="-&gt;&#xA;" HorizontalAlignment="Left" Margin="184,115,0,0" VerticalAlignment="Top" Width="60" Height="30" Click="exitButton_Click"/>
         <Label x:Name="label" Content="Create a new map" HorizontalAlignment="Left" Margin="43,18,0,0" VerticalAlignment="Top" Width="136"/>
-        <Label x:Name="label_Copy" Content="Open a new map" HorizontalAlignment="Left" Margin="43,67,0,0" VerticalAlignment="Top" Width="136"/>
+        <Label x:Name="label_Copy" Content="Open a map" HorizontalAlignment="Left" Margin="43,67,0,0" VerticalAlignment="Top" Width="136"/>
         <Label x:Name="label_Copy1" Content="Exit the map editor" HorizontalAlignment="Left" Margin="43,115,0,0" VerticalAlignment="Top" Width="136"/>
 
     </Grid>

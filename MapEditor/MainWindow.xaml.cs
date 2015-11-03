@@ -4,18 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Forms;
 
 namespace MapEditor
 {
@@ -27,10 +22,12 @@ namespace MapEditor
         public const string defaultColor = "#FFF4F4F5";
         public string defaultColorFile = "../settings.txt";
 
+        public bool cancelExit { get; set; }
+
         // Useful variable to determine when to trigger the save popup
         public string lastSavePath { get; set; }
         public bool hasBeenModified { get; set; }
-
+        // Map infos
         public int mapWidth { get; set; }
         public int mapHeight { get; set; }
         public string mapName { get; set; }
@@ -121,7 +118,7 @@ namespace MapEditor
         // Open an existing JSON saved map
         private void MenuFileNew_Open(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFilePopup = new OpenFileDialog();
+            System.Windows.Forms.OpenFileDialog openFilePopup = new System.Windows.Forms.OpenFileDialog();
             int newMapWidth, newMapHeight, tileSize = 0;
             string newMapName;
 
@@ -262,7 +259,7 @@ namespace MapEditor
         private void MenuFileNew_Save(object sender, RoutedEventArgs e)
         {
             // Popup to select the location of the file
-            SaveFileDialog saveFilePopup = new SaveFileDialog();
+            System.Windows.Forms.SaveFileDialog saveFilePopup = new System.Windows.Forms.SaveFileDialog();
 
             string savePath;
 
@@ -272,7 +269,8 @@ namespace MapEditor
                 saveFilePopup.Filter = "JSON documents (.json)|*.json";
                 saveFilePopup.Title = "Save your map";
                 saveFilePopup.FileName = removeSpecialCharacters(mapName);
-                saveFilePopup.ShowDialog();
+                if (saveFilePopup.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+                    cancelExit = true;
             }
 
             if (saveFilePopup.FileName != "" || !String.IsNullOrEmpty(lastSavePath))
@@ -283,7 +281,7 @@ namespace MapEditor
 
                 foreach (Color tileColor in usedColors)
                 {
-                    List<tile> singleColorTileList = new List<tile>();                    
+                    List<tile> singleColorTileList = new List<tile>();
 
                     for (int j = 0; j < mapHeight; j++)
                     {
@@ -338,7 +336,7 @@ namespace MapEditor
                     {
                         if (isStringHexadecimal(extractedColor[1]))
                         {
-                            Button newButton = new Button { Content = extractedColor[0], Tag = extractedColor[1], Width = 50, Height = 50, Margin = new Thickness(5, 5, 5, 0) };
+                            System.Windows.Controls.Button newButton = new System.Windows.Controls.Button { Content = extractedColor[0], Tag = extractedColor[1], Width = 50, Height = 50, Margin = new Thickness(5, 5, 5, 0) };
                             newButton.Click += coloredButton_Click;
                             panel.Children.Add(newButton);
                         }
@@ -373,9 +371,9 @@ namespace MapEditor
         }
 
         // Check the validity of an string (hexadecimal or not)
-        public bool isStringHexadecimal(string test)
+        public bool isStringHexadecimal(string str)
         {
-            return Regex.IsMatch(test, "^#(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$");
+            return Regex.IsMatch(str, "^#(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$");
         }
 
         // Get the coordinates of the tile selected (or the first tile if multiple tiles are selected)
@@ -472,7 +470,7 @@ namespace MapEditor
 
         private void coloredButton_Click(object sender, RoutedEventArgs e)
         {
-            Button ClickedButton = (Button)e.OriginalSource;
+            System.Windows.Controls.Button ClickedButton = (System.Windows.Controls.Button)e.OriginalSource;
 
             color = (Color)ColorConverter.ConvertFromString(ClickedButton.Tag.ToString());
             selectedColor.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom(ClickedButton.Tag.ToString());
@@ -490,12 +488,12 @@ namespace MapEditor
             {
                 case MainMenu.Action.CREATE:
                     {
-                        newButton.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                        newButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));
                         break;
                     }
                 case MainMenu.Action.OPEN:
                     {
-                        openButton.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                        openButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));
                         break;
                     }
                 case MainMenu.Action.EXIT:
@@ -525,12 +523,22 @@ namespace MapEditor
                     case SavePopup.Action.CHANGEPATH:
                         {
                             lastSavePath = null;
-                            saveButton.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                            saveButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));
+                            if (cancelExit == true)
+                            {
+                                cancelExit = false;
+                                e.Cancel = true;
+                            }
                             break;
                         }
                     case SavePopup.Action.SAVE:
                         {
-                            saveButton.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                            saveButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));
+                            break;
+                        }
+                    case SavePopup.Action.NOTHING:
+                        {
+                            e.Cancel = true;
                             break;
                         }
                 }

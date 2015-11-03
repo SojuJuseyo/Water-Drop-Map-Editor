@@ -23,6 +23,7 @@ namespace MapEditor
         public string defaultColorFile = "../settings.txt";
 
         public bool cancelExit { get; set; }
+        public bool disableExitButton { get; set; }
 
         // Useful variable to determine when to trigger the save popup
         public string lastSavePath { get; set; }
@@ -66,6 +67,12 @@ namespace MapEditor
         // Creation of a new map
         private void MenuFileNew_Click(object sender, RoutedEventArgs e)
         {
+            if (hasBeenModified == true)
+            {
+                disableExitButton = true;
+                editorClosing(this, new System.ComponentModel.CancelEventArgs());
+            }
+
             NewMap createNewMapWindow = new NewMap();
             createNewMapWindow.Owner = this;
             createNewMapWindow.ShowDialog();
@@ -109,6 +116,7 @@ namespace MapEditor
                 selectedColorLabel.Visibility = Visibility.Visible;
                 saveButton.IsEnabled = true;
                 lastSavePath = null;
+                hasBeenModified = false;
             }
 
             firstTileX = -1;
@@ -118,6 +126,12 @@ namespace MapEditor
         // Open an existing JSON saved map
         private void MenuFileNew_Open(object sender, RoutedEventArgs e)
         {
+            if (hasBeenModified == true)
+            {
+                disableExitButton = true;
+                editorClosing(this, new System.ComponentModel.CancelEventArgs());
+            }
+
             System.Windows.Forms.OpenFileDialog openFilePopup = new System.Windows.Forms.OpenFileDialog();
             int newMapWidth, newMapHeight, tileSize = 0;
             string newMapName;
@@ -249,6 +263,7 @@ namespace MapEditor
                 selectedColorLabel.Visibility = Visibility.Visible;
                 saveButton.IsEnabled = true;
                 lastSavePath = openFilePopup.FileName;
+                hasBeenModified = false;
 
                 firstTileX = -1;
                 firstTileY = -1;
@@ -519,6 +534,12 @@ namespace MapEditor
 
                 savePopup.setCurrentLocation(lastSavePath);
                 savePopup.Owner = this;
+
+                // To disable the button exit when you're creating or opening a map
+                if (disableExitButton == true)
+                    savePopup.exitButton.IsEnabled = false;
+                disableExitButton = false;
+
                 savePopup.ShowDialog();
 
                 switch (savePopup.action)

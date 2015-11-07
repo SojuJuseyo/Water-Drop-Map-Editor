@@ -54,6 +54,14 @@ namespace MapEditor
             this.Close();
         }
 
+        private void noButton_Click(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Je suis dans le no");
+            isClosing = true;
+            action = Action.EXIT;
+            this.Close();
+        }
+
         private void changeButton_Click(object sender, RoutedEventArgs e)
         {
             isClosing = true;
@@ -72,6 +80,11 @@ namespace MapEditor
         {
             if (isClosing == false)
                 action = Action.NOTHING;
+        }
+
+        public void changeEventExitButton()
+        {
+            exitButton.Click += new RoutedEventHandler(noButton_Click);
         }
     }
 }

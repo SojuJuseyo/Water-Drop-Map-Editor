@@ -22,8 +22,12 @@ namespace MapEditor
         public const string defaultColor = "#FFF4F4F5";
         public string defaultColorFile = "../settings.txt";
 
+        // Cancel the exit of the map editor if you click on the red cross of the popup window
         public bool cancelExit { get; set; }
-        public bool disableExitButton { get; set; }
+        // Basically cancel the creation of a new map of the opening of a map if you click on the red cross
+        public bool cancelNextAction { get; set; }
+        // Disable the exit button when you create or open a new map
+        public bool changeExitButton { get; set; }
 
         // Useful variable to determine when to trigger the save popup
         public string lastSavePath { get; set; }
@@ -69,8 +73,10 @@ namespace MapEditor
         {
             if (hasBeenModified == true)
             {
-                disableExitButton = true;
+                changeExitButton = true;
                 editorClosing(this, new System.ComponentModel.CancelEventArgs());
+                if (cancelNextAction == true)
+                    return;
             }
 
             NewMap createNewMapWindow = new NewMap();
@@ -117,6 +123,7 @@ namespace MapEditor
                 saveButton.IsEnabled = true;
                 lastSavePath = null;
                 hasBeenModified = false;
+                cancelNextAction = false;
             }
 
             firstTileX = -1;
@@ -128,8 +135,10 @@ namespace MapEditor
         {
             if (hasBeenModified == true)
             {
-                disableExitButton = true;
+                changeExitButton = true;
                 editorClosing(this, new System.ComponentModel.CancelEventArgs());
+                if (cancelNextAction == true)
+                    return;
             }
 
             System.Windows.Forms.OpenFileDialog openFilePopup = new System.Windows.Forms.OpenFileDialog();
@@ -535,10 +544,16 @@ namespace MapEditor
                 savePopup.setCurrentLocation(lastSavePath);
                 savePopup.Owner = this;
 
-                // To disable the button exit when you're creating or opening a map
-                if (disableExitButton == true)
-                    savePopup.exitButton.IsEnabled = false;
-                disableExitButton = false;
+                // To change the button exit in a "No" button when you're creating or opening a map
+                if (changeExitButton == true)
+                {
+                    savePopup.exitButton.Content = "No";
+                    savePopup.changeEventExitButton();
+                }
+                changeExitButton = false;
+
+                // In case you press the red cross when opening or creating a map
+                cancelNextAction = false;
 
                 savePopup.ShowDialog();
 
@@ -562,6 +577,7 @@ namespace MapEditor
                         }
                     case SavePopup.Action.NOTHING:
                         {
+                            cancelNextAction = true;
                             e.Cancel = true;
                             break;
                         }

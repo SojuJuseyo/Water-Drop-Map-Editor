@@ -109,7 +109,7 @@ namespace MapEditor
                     WrapPanel panel = new WrapPanel();
                     for (int i = 0; i < mapWidth; i++)
                     {
-                        panel.Children.Add(new Rectangle { Tag = i + "/" + j, Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFF4F4F5"), Stroke = new SolidColorBrush(Colors.Black), RadiusX = 10, RadiusY = 10, Margin = new Thickness(0, 2, 2, 0) });
+                        panel.Children.Add(new Rectangle { Tag = i + "/" + (mapHeight - j - 1), Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFF4F4F5"), Stroke = new SolidColorBrush(Colors.Black), /*RadiusX = 10, RadiusY = 10,*/ Margin = new Thickness(0, 2, 2, 0) });
                     }
                     mapGrid.Children.Add(panel);
                 }
@@ -238,7 +238,7 @@ namespace MapEditor
                     WrapPanel panel = new WrapPanel();
                     for (int i = 0; i < mapWidth; i++)
                     {
-                        panel.Children.Add(new Rectangle { Tag = i + "/" + j, Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFF4F4F5"), Stroke = new SolidColorBrush(Colors.Black), RadiusX = 10, RadiusY = 10, Margin = new Thickness(0, 2, 2, 0) });
+                        panel.Children.Add(new Rectangle { Tag = i + "/" + (mapHeight - 1 - j), Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFF4F4F5"), Stroke = new SolidColorBrush(Colors.Black), /*RadiusX = 10, RadiusY = 10,*/ Margin = new Thickness(0, 2, 2, 0) });
                     }
                     mapGrid.Children.Add(panel);
                 }
@@ -468,7 +468,7 @@ namespace MapEditor
                             {
                                 if (globalMap[currentX, currentY] == null)
                                     globalMap[currentX, currentY] = new tile();
-                                rectangleChild.Fill = setRectangleColor(currentX, currentY);
+                                    rectangleChild.Fill = setRectangleColor(currentX, currentY);
                                 // If the color was never used before, add it to the list of usedColors
                                 if (usedColors.IndexOf(color) < 0)
                                     usedColors.Add(color);

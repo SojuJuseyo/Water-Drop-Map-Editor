@@ -56,7 +56,6 @@ namespace MapEditor
 
         private void noButton_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Je suis dans le no");
             isClosing = true;
             action = Action.EXIT;
             this.Close();

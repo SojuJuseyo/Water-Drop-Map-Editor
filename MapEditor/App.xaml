@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:MapEditor"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <BitmapImage x:Key="audioIcon" UriSource="/Resources/audioIcon.png" />
     </Application.Resources>
 </Application>

@@ -36,6 +36,7 @@ namespace MapEditor
         public int mapWidth { get; set; }
         public int mapHeight { get; set; }
         public string mapName { get; set; }
+        public string mapAudioPath { get; set; }
         // To delete after (when there will be textures)
         public Color color { get; set; }
         // To change after
@@ -60,6 +61,7 @@ namespace MapEditor
         {
             public string name { get; set; }
             public string size { get; set; }
+            public string audio { get; set; }
             public Dictionary<Color, List<tile>> tileList { get; set; }
         }
 
@@ -120,6 +122,7 @@ namespace MapEditor
                 loadButtonsFromFile();
                 gridSplitter.Visibility = Visibility.Visible;
                 selectedColorLabel.Visibility = Visibility.Visible;
+                audioButton.Visibility = Visibility.Visible;
                 saveButton.IsEnabled = true;
                 lastSavePath = null;
                 hasBeenModified = false;
@@ -270,6 +273,7 @@ namespace MapEditor
                 loadButtonsFromFile();
                 gridSplitter.Visibility = Visibility.Visible;
                 selectedColorLabel.Visibility = Visibility.Visible;
+                audioButton.Visibility = Visibility.Visible;
                 saveButton.IsEnabled = true;
                 lastSavePath = openFilePopup.FileName;
                 hasBeenModified = false;
@@ -335,6 +339,7 @@ namespace MapEditor
 
                 map.name = mapName;
                 map.size = mapWidth + "/" + mapHeight;
+                map.audio = mapAudioPath;
                 map.tileList = sortedTileList;
 
                 string json = JsonConvert.SerializeObject(map, Formatting.Indented);
@@ -535,6 +540,7 @@ namespace MapEditor
             }
         }
 
+        // Handle the exit of the map editor
         private void editorClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (hasBeenModified == true)
@@ -583,6 +589,20 @@ namespace MapEditor
                         }
                 }
             }
+        }
+
+        // Click on the audio button
+        private void audioButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog openFilePopup = new System.Windows.Forms.OpenFileDialog();
+
+            openFilePopup.DefaultExt = ".mp3";
+            openFilePopup.Filter = "All Supported Audio | *.mp3";
+            openFilePopup.Title = "Open an audio file";
+            openFilePopup.ShowDialog();
+
+            if (openFilePopup.FileName != "")
+                mapAudioPath = openFilePopup.FileName;
         }
     }
 }

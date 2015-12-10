@@ -1,3 +1,5 @@
-Blue|#abcdef
-Green|#117050
-Red|#f93738
+Player|#abcdef
+Ground|#117050
+Platforms|#f93738
+Enemy|#000000
+Exit|#ffd700

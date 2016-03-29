@@ -17,8 +17,10 @@
                 <MenuItem x:Name="saveButton" Header="_Save" Click="MenuFileNew_Save" IsEnabled="False"/>
             </MenuItem>
         </Menu>
-        <StackPanel MouseLeftButtonDown="setTileTexture" x:Name="mapGrid" HorizontalAlignment="Right" Margin="0,27,9.6,0" VerticalAlignment="Top" Width="550" Height="550" MouseLeftButtonUp="setTileTextureApply"/>
-        <GridSplitter x:Name="gridSplitter" HorizontalAlignment="Left" Margin="440,27,0,0" VerticalAlignment="Top" Width="2" Background="#FFCCCCCC" Height="554" Visibility="Hidden" Focusable="False" IsEnabled="False"/>
+        <ScrollViewer Margin="0,27,-0.4,0" HorizontalAlignment="Right" Name="ScrollViewer1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" CanContentScroll="True">
+            <StackPanel Margin="0,0,5,0" MouseLeftButtonDown="setTileTexture" x:Name="mapGrid" HorizontalAlignment="Right" VerticalAlignment="Top" Width="550" Height="550" MouseLeftButtonUp="setTileTextureApply"/>
+        </ScrollViewer>
+        <GridSplitter x:Name="gridSplitter" HorizontalAlignment="Left" Margin="445,27,0,0" VerticalAlignment="Top" Width="2" Background="#FFCCCCCC" Height="554" Visibility="Visible"  Focusable="False" IsEnabled="False"/>
         <Label x:Name="selectedColorLabel" Content="Currently selected color :" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Height="35" Width="165" FontSize="14" FontStyle="Italic" VerticalContentAlignment="Center" Visibility="Hidden"/>
         <Rectangle x:Name="selectedColor" Fill="White" HorizontalAlignment="Left" Height="35" Margin="180,37,0,0" Stroke="#FFA6A4A4" VerticalAlignment="Top" Width="35" StrokeThickness="0"/>
         <StackPanel x:Name="colorsPanel" HorizontalAlignment="Left" Height="491" Margin="10,91,0,0" VerticalAlignment="Top" Width="425"/>

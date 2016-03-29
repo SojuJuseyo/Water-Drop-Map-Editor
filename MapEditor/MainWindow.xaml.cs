@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Windows.Forms;
 
 namespace MapEditor
 {
@@ -106,12 +104,20 @@ namespace MapEditor
                 else
                     tileSize = (550 - mapHeight * 2) / (mapHeight);
 
+                if (tileSize < 25)
+                {
+                    tileSize = 25;
+                    gridSplitter.Margin = new Thickness(430, 27, 0, 0);
+                }
+                else
+                    gridSplitter.Margin = new Thickness(445, 27, 0, 0);
+
                 for (int j = 0; j < mapHeight; j++)
                 {
                     WrapPanel panel = new WrapPanel();
                     for (int i = 0; i < mapWidth; i++)
                     {
-                        panel.Children.Add(new Rectangle { Tag = i + "/" + (mapHeight - j - 1), Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFF4F4F5"), Stroke = new SolidColorBrush(Colors.Black), /*RadiusX = 10, RadiusY = 10,*/ Margin = new Thickness(0, 2, 2, 0) });
+                        panel.Children.Add(new Rectangle { Tag = i + "/" + (mapHeight - j - 1), Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFF4F4F5"), Stroke = new SolidColorBrush(Colors.Black), Margin = new Thickness(0, 2, 2, 0) });
                     }
                     mapGrid.Children.Add(panel);
                 }
@@ -168,6 +174,7 @@ namespace MapEditor
                     newMapWidth = int.Parse(size.First());
                     newMapHeight = int.Parse(size.Last());
                     newMapName = loadedMap.name;
+                    mapAudioPath = loadedMap.audio;
 
                     newGlobalMap = new tile[newMapWidth, newMapHeight];
 
@@ -596,8 +603,8 @@ namespace MapEditor
         {
             System.Windows.Forms.OpenFileDialog openFilePopup = new System.Windows.Forms.OpenFileDialog();
 
-            openFilePopup.DefaultExt = ".mp3";
-            openFilePopup.Filter = "All Supported Audio | *.mp3";
+            openFilePopup.DefaultExt = ".wav";
+            openFilePopup.Filter = "All Supported Audio | *.wav";
             openFilePopup.Title = "Open an audio file";
             openFilePopup.ShowDialog();
 

@@ -3,3 +3,4 @@ Ground|#117050
 Platforms|#f93738
 Enemy|#000000
 Exit|#ffd700
+Bloc|#551A8B

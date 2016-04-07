@@ -184,6 +184,14 @@ namespace MapEditor
                     else
                         tileSize = (550 - newMapHeight * 2) / (newMapHeight);
 
+                    if (tileSize < 25)
+                    {
+                        tileSize = 25;
+                        gridSplitter.Margin = new Thickness(430, 27, 0, 0);
+                    }
+                    else
+                        gridSplitter.Margin = new Thickness(445, 27, 0, 0);
+
                     foreach (var list in loadedMap.tileList)
                     {
                         var tileColor = list.Key;

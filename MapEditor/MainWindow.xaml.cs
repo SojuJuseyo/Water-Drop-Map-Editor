@@ -8,14 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
-/*
-            BitmapImage kappaImage = new BitmapImage(new Uri("C:/Users/Thomas/Desktop/Sprites.png"));
-            CroppedBitmap croppedKappa = new CroppedBitmap(kappaImage, new Int32Rect(0, 0, 16, 16));
-            ImageBrush kappaBrush = new ImageBrush(croppedKappa);
-            RectangleTest.Fill = kappaBrush;
-*/
 
 namespace MapEditor
 {
@@ -26,6 +20,7 @@ namespace MapEditor
     {
         public const string defaultColor = "#FFF4F4F5";
         public string defaultColorFile = "../settings.txt";
+        public string defaultSpriteSheetFile = "../spritesheet.png";
 
         // Cancel the exit of the map editor if you click on the red cross of the popup window
         public bool cancelExit { get; set; }
@@ -368,11 +363,29 @@ namespace MapEditor
         // Load the buttons from a txt file
         private void loadButtonsFromFile()
         {
-            int i = 0;
             string line;
 
+            if (File.Exists(defaultSpriteSheetFile))
+            {
+                WrapPanel panel = new WrapPanel();
+                BitmapImage spriteSheet = new BitmapImage(new Uri(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, defaultSpriteSheetFile)));
+
+                for (int i = 0; i * 16 < spriteSheet.Width; i++)
+                {
+                    CroppedBitmap singleSprite = new CroppedBitmap(spriteSheet, new Int32Rect(i * 16, 0, 16, 16));
+
+                    Rectangle spriteRectangle = new Rectangle { Width = 48, Height = 48, Stroke = new SolidColorBrush(Colors.Black), Margin = new Thickness(5, 5, 5, 5) };
+                    spriteRectangle.Fill = new ImageBrush(singleSprite);
+
+                    panel.Children.Add(spriteRectangle);
+                }
+
+                colorsPanel.Children.Add(panel);
+            }
+            
             if (File.Exists(defaultColorFile))
             {
+                int i = 0;
                 StreamReader file = new StreamReader(defaultColorFile);
 
                 WrapPanel panel = new WrapPanel();

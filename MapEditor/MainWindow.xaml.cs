@@ -10,6 +10,13 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
+/*
+            BitmapImage kappaImage = new BitmapImage(new Uri("C:/Users/Thomas/Desktop/Sprites.png"));
+            CroppedBitmap croppedKappa = new CroppedBitmap(kappaImage, new Int32Rect(0, 0, 16, 16));
+            ImageBrush kappaBrush = new ImageBrush(croppedKappa);
+            RectangleTest.Fill = kappaBrush;
+*/
+
 namespace MapEditor
 {
     /// <summary>
@@ -98,20 +105,13 @@ namespace MapEditor
                 this.Title = mapName;
 
                 // Deciding the size of the rectangles (tiles)
-                int tileSize = 0;
-                if (mapWidth > mapHeight)
-                    tileSize = (550 - mapWidth * 2) / (mapWidth);
-                else
-                    tileSize = (550 - mapHeight * 2) / (mapHeight);
-
-                if (tileSize < 25)
-                {
-                    tileSize = 25;
+                int tileSize = 32;
+                
+                if (mapWidth > 16 || mapHeight > 16)
                     gridSplitter.Margin = new Thickness(430, 27, 0, 0);
-                }
                 else
                     gridSplitter.Margin = new Thickness(445, 27, 0, 0);
-
+                    
                 for (int j = 0; j < mapHeight; j++)
                 {
                     WrapPanel panel = new WrapPanel();

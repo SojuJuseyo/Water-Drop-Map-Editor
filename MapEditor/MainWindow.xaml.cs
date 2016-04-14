@@ -19,7 +19,6 @@ namespace MapEditor
     public partial class MainWindow : Window
     {
         public const string defaultColor = "#FFF4F4F5";
-        public string defaultColorFile = "../settings.txt";
         public string defaultSpriteSheetFile = "../spritesheet.png";
 
         // Cancel the exit of the map editor if you click on the red cross of the popup window
@@ -28,6 +27,8 @@ namespace MapEditor
         public bool cancelNextAction { get; set; }
         // Disable the exit button when you create or open a new map
         public bool changeExitButton { get; set; }
+        // Determine if you can click on the map (threading system)
+        public bool canClick { get; set; }
 
         // Useful variable to determine when to trigger the save popup
         public string lastSavePath { get; set; }
@@ -37,10 +38,10 @@ namespace MapEditor
         public int mapHeight { get; set; }
         public string mapName { get; set; }
         public string mapAudioPath { get; set; }
-        // To delete after (when there will be textures)
-        public Color color { get; set; }
-        // To change after
-        public List<Color> usedColors = new List<Color>();
+
+        public ImageBrush sprite { get; set; }
+        public List<ImageBrush> listSprites = new List<ImageBrush>();
+        public Dictionary<int, ImageBrush> usedSprites = new Dictionary<int, ImageBrush>();
 
         // Those variables are the coordinate of the rectangle on a MouseDown event
         public int firstTileX { get; set; }
@@ -49,7 +50,7 @@ namespace MapEditor
         public class tile
         {
             [JsonIgnore]
-            public Color tileColor { get; set; }
+            public ImageBrush tileSprite { get; set; }
             public int coordx { get; set; }
             public int coordy { get; set; }
         }
@@ -62,7 +63,7 @@ namespace MapEditor
             public string name { get; set; }
             public string size { get; set; }
             public string audio { get; set; }
-            public Dictionary<Color, List<tile>> tileList { get; set; }
+            public Dictionary<int, List<tile>> tileList { get; set; }
         }
 
         public MainWindow()
@@ -118,16 +119,22 @@ namespace MapEditor
                 }
 
                 // Clear existing buttons
-                colorsPanel.Children.Clear();
+                tileSelectionPanel.Children.Clear();
 
                 loadButtonsFromFile();
                 gridSplitter.Visibility = Visibility.Visible;
-                selectedColorLabel.Visibility = Visibility.Visible;
+                selectedSpriteLabel.Visibility = Visibility.Visible;
                 audioButton.Visibility = Visibility.Visible;
                 saveButton.IsEnabled = true;
                 lastSavePath = null;
                 hasBeenModified = false;
                 cancelNextAction = false;
+
+                selectedSprite.Fill = listSprites[0];
+                sprite = listSprites[0];
+
+                canClick = true;
+
             }
 
             firstTileX = -1;
@@ -144,6 +151,10 @@ namespace MapEditor
                 if (cancelNextAction == true)
                     return;
             }
+
+            canClick = false;
+
+            usedSprites.Clear();
 
             System.Windows.Forms.OpenFileDialog openFilePopup = new System.Windows.Forms.OpenFileDialog();
             int newMapWidth, newMapHeight, tileSize = 0;
@@ -174,22 +185,18 @@ namespace MapEditor
                     newGlobalMap = new tile[newMapWidth, newMapHeight];
 
                     // Deciding the size of the rectangles (tiles)
-                    if (newMapWidth > newMapHeight)
-                        tileSize = (550 - newMapWidth * 2) / (newMapWidth);
-                    else
-                        tileSize = (550 - newMapHeight * 2) / (newMapHeight);
+                    tileSize = 32;
 
-                    if (tileSize < 25)
-                    {
-                        tileSize = 25;
+                    if (mapWidth > 16 || mapHeight > 16)
                         gridSplitter.Margin = new Thickness(430, 27, 0, 0);
-                    }
                     else
                         gridSplitter.Margin = new Thickness(445, 27, 0, 0);
 
+                    loadButtonsFromFile();
+
                     foreach (var list in loadedMap.tileList)
                     {
-                        var tileColor = list.Key;
+                        var tileIndex = list.Key;
                         var tileList = list.Value;
 
                         foreach (tile elem in tileList)
@@ -197,24 +204,10 @@ namespace MapEditor
                             tile newTile = new tile();
                             newTile.coordx = elem.coordx;
                             newTile.coordy = elem.coordy;
-                            newTile.tileColor = tileColor;
+                            newTile.tileSprite = listSprites[tileIndex];
 
-                            newGlobalMap[elem.coordx, elem.coordy] = newTile;
-                        }
-                    }
-
-                    // Re-set the values to the globalMap
-                    foreach (var list in loadedMap.tileList)
-                    {
-                        var tileColor = list.Key;
-                        var tileList = list.Value;
-
-                        foreach (tile elem in tileList)
-                        {
-                            tile newTile = new tile();
-                            newTile.coordx = elem.coordx;
-                            newTile.coordy = elem.coordy;
-                            newTile.tileColor = tileColor;
+                            if (!usedSprites.ContainsKey(tileIndex))
+                                usedSprites.Add(tileIndex, listSprites[tileIndex]);
 
                             newGlobalMap[elem.coordx, elem.coordy] = newTile;
                         }
@@ -245,13 +238,13 @@ namespace MapEditor
                 // Clear the potential already existing map
                 mapGrid.Children.Clear();
 
-                // Reapply the colors to the map
+                // Reapply the sprites to the map
                 for (int j = 0; j < mapHeight; j++)
                 {
                     WrapPanel panel = new WrapPanel();
                     for (int i = 0; i < mapWidth; i++)
                     {
-                        panel.Children.Add(new Rectangle { Tag = i + "/" + (mapHeight - 1 - j), Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFF4F4F5"), Stroke = new SolidColorBrush(Colors.Black), /*RadiusX = 10, RadiusY = 10,*/ Margin = new Thickness(0, 2, 2, 0) });
+                        panel.Children.Add(new Rectangle { Tag = i + "/" + (mapHeight - 1 - j), Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFF4F4F5"), Stroke = new SolidColorBrush(Colors.Black), Margin = new Thickness(0, 2, 2, 0) });
                     }
                     mapGrid.Children.Add(panel);
                 }
@@ -265,11 +258,9 @@ namespace MapEditor
                         int currentX = int.Parse(currentCoo.First());
                         int currentY = int.Parse(currentCoo.Last());
 
-                        if (newGlobalMap[currentX, currentY] != null)
+                        if (globalMap[currentX, currentY] != null)
                         {
-                            if (usedColors.IndexOf(globalMap[currentX, currentY].tileColor) < 0)
-                                usedColors.Add(globalMap[currentX, currentY].tileColor);
-                            rectangleChild.Fill = new SolidColorBrush(globalMap[currentX, currentY].tileColor);
+                            rectangleChild.Fill = globalMap[currentX, currentY].tileSprite;
                         }
                     }
                 }
@@ -278,15 +269,26 @@ namespace MapEditor
                 informations.Visibility = Visibility.Hidden;
 
                 // Clear existing buttons
-                colorsPanel.Children.Clear();
+                tileSelectionPanel.Children.Clear();
 
                 loadButtonsFromFile();
                 gridSplitter.Visibility = Visibility.Visible;
-                selectedColorLabel.Visibility = Visibility.Visible;
+                selectedSpriteLabel.Visibility = Visibility.Visible;
                 audioButton.Visibility = Visibility.Visible;
                 saveButton.IsEnabled = true;
                 lastSavePath = openFilePopup.FileName;
                 hasBeenModified = false;
+
+                selectedSprite.Fill = listSprites[0];
+                sprite = listSprites[0];
+
+                // Thread system to prevent miss clicking while opening a map
+                System.Threading.Timer timer = null;
+                timer = new System.Threading.Timer((obj) =>
+                {
+                    canClick = true;
+                    timer.Dispose();
+                }, null, 500, System.Threading.Timeout.Infinite);
 
                 firstTileX = -1;
                 firstTileY = -1;
@@ -318,11 +320,11 @@ namespace MapEditor
             {
                 savePath = (saveFilePopup.FileName != "" ? saveFilePopup.FileName : lastSavePath);
 
-                Dictionary<Color, List<tile>> sortedTileList = new Dictionary<Color, List<tile>>();
+                Dictionary<int, List<tile>> sortedTileList = new Dictionary<int, List<tile>>();
 
-                foreach (Color tileColor in usedColors)
+                for (int k = 0; k < listSprites.Count; k++)
                 {
-                    List<tile> singleColorTileList = new List<tile>();
+                    List<tile> singleSpriteTileList = new List<tile>();
 
                     for (int j = 0; j < mapHeight; j++)
                     {
@@ -330,19 +332,34 @@ namespace MapEditor
                         {
                             if (globalMap[i, j] != null)
                             {
-                                if (globalMap[i, j].tileColor == tileColor)
+                                if (globalMap[i, j].tileSprite.ImageSource == listSprites[k].ImageSource)
                                 {
-                                    singleColorTileList.Add(new tile()
+                                    singleSpriteTileList.Add(new tile()
                                     {
                                         coordx = i,
                                         coordy = j
                                     });
                                 }
+                                else
+                                {
+                                    if (usedSprites.ContainsKey(k))
+                                    {
+                                        if (globalMap[i, j].tileSprite == usedSprites[k])
+                                        {
+                                            singleSpriteTileList.Add(new tile()
+                                            {
+                                                coordx = i,
+                                                coordy = j
+                                            });
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
 
-                    sortedTileList.Add(tileColor, singleColorTileList);
+                    if (singleSpriteTileList.Count != 0)
+                        sortedTileList.Add(k, singleSpriteTileList);
                 }
 
                 MapInfos map = new MapInfos();
@@ -363,12 +380,12 @@ namespace MapEditor
         // Load the buttons from a txt file
         private void loadButtonsFromFile()
         {
-            string line;
-
             if (File.Exists(defaultSpriteSheetFile))
             {
                 WrapPanel panel = new WrapPanel();
                 BitmapImage spriteSheet = new BitmapImage(new Uri(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, defaultSpriteSheetFile)));
+
+                listSprites.Clear();
 
                 for (int i = 0; i * 16 < spriteSheet.Width; i++)
                 {
@@ -376,41 +393,19 @@ namespace MapEditor
 
                     Rectangle spriteRectangle = new Rectangle { Width = 48, Height = 48, Stroke = new SolidColorBrush(Colors.Black), Margin = new Thickness(5, 5, 5, 5) };
                     spriteRectangle.Fill = new ImageBrush(singleSprite);
+                    spriteRectangle.MouseLeftButtonDown += spriteButton_Click;
+
+                    listSprites.Add(new ImageBrush(singleSprite));
 
                     panel.Children.Add(spriteRectangle);
                 }
 
-                colorsPanel.Children.Add(panel);
-            }
-            
-            if (File.Exists(defaultColorFile))
-            {
-                int i = 0;
-                StreamReader file = new StreamReader(defaultColorFile);
-
-                WrapPanel panel = new WrapPanel();
-                while ((line = file.ReadLine()) != null)
-                {
-                    String[] extractedColor = line.Split('|');
-                    if (extractedColor.Length == 2)
-                    {
-                        if (isStringHexadecimal(extractedColor[1]))
-                        {
-                            System.Windows.Controls.Button newButton = new System.Windows.Controls.Button { Content = extractedColor[0], Tag = extractedColor[1], Width = 50, Height = 50, Margin = new Thickness(5, 5, 5, 0) };
-                            newButton.Click += coloredButton_Click;
-                            panel.Children.Add(newButton);
-                        }
-                    }
-                    i++;
-                }
-                colorsPanel.Children.Add(panel);
-
-                file.Close();
+                tileSelectionPanel.Children.Add(panel);
             }
             else
             {
                 NoConfigFilePopup popup = new NoConfigFilePopup();
-                string[] configFilePath = defaultColorFile.Split('/');
+                string[] configFilePath = defaultSpriteSheetFile.Split('/');
 
                 popup.setContent(configFilePath.Last());
                 popup.Owner = this;
@@ -418,10 +413,11 @@ namespace MapEditor
 
                 if (!string.IsNullOrEmpty(popup.fileName))
                 {
-                    defaultColorFile = popup.fileName;
+                    defaultSpriteSheetFile = popup.fileName;
                     this.loadButtonsFromFile();
                 }
             }
+
         }
 
         // Remove special characters
@@ -453,87 +449,84 @@ namespace MapEditor
         // Apply the texture to the tile(s)
         private void setTileTextureApply(object sender, MouseButtonEventArgs e)
         {
-            Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
-
-            // Get the TAG of the Rectangle (tag contains coordinates)
-            String[] coo = ClickedRectangle.Tag.ToString().Split('/');
-            int secondTileX = int.Parse(coo.First());
-            int secondTileY = int.Parse(coo.Last());
-
-            // Shortly : MouseDown outside of a rectangle and MouseUp on one
-            if (firstTileX == -1 && firstTileY == -1)
+            if (canClick == true)
             {
-                if (globalMap[secondTileX, secondTileY] == null)
-                    globalMap[secondTileX, secondTileY] = new tile();
-                ClickedRectangle.Fill = setRectangleColor(secondTileX, secondTileY);
-                // If the color was never used before, add it to the list of usedColors
-                if (usedColors.IndexOf(color) < 0)
-                    usedColors.Add(color);
-            }
-            else
-            {
-                // Define the smallest X and the biggest. Same for Y
-                Tuple<int, int> xLimits;
-                Tuple<int, int> yLimits;
+                Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
 
-                if (firstTileX > secondTileX)
-                    xLimits = new Tuple<int, int>(secondTileX, firstTileX);
-                else
-                    xLimits = new Tuple<int, int>(firstTileX, secondTileX);
+                // Get the TAG of the Rectangle (tag contains coordinates)
+                String[] coo = ClickedRectangle.Tag.ToString().Split('/');
+                int secondTileX = int.Parse(coo.First());
+                int secondTileY = int.Parse(coo.Last());
 
-                if (firstTileY > secondTileY)
-                    yLimits = new Tuple<int, int>(secondTileY, firstTileY);
-                else
-                    yLimits = new Tuple<int, int>(firstTileY, secondTileY);
-
-                foreach (WrapPanel panelChild in mapGrid.Children)
+                // Shortly : MouseDown outside of a rectangle and MouseUp on one
+                if (firstTileX == -1 && firstTileY == -1)
                 {
-                    foreach (Rectangle rectangleChild in panelChild.Children)
-                    {
-                        // Get the TAG of the Rectangle (tag contains coordinates)
-                        String[] currentCoo = rectangleChild.Tag.ToString().Split('/');
-                        int currentX = int.Parse(currentCoo.First());
-                        int currentY = int.Parse(currentCoo.Last());
+                    if (globalMap[secondTileX, secondTileY] == null)
+                        globalMap[secondTileX, secondTileY] = new tile();
+                    ClickedRectangle.Fill = setRectangleSprite(secondTileX, secondTileY);
+                }
+                else
+                {
+                    // Define the smallest X and the biggest. Same for Y
+                    Tuple<int, int> xLimits;
+                    Tuple<int, int> yLimits;
 
-                        if (currentX >= xLimits.Item1 && currentX <= xLimits.Item2)
+                    if (firstTileX > secondTileX)
+                        xLimits = new Tuple<int, int>(secondTileX, firstTileX);
+                    else
+                        xLimits = new Tuple<int, int>(firstTileX, secondTileX);
+
+                    if (firstTileY > secondTileY)
+                        yLimits = new Tuple<int, int>(secondTileY, firstTileY);
+                    else
+                        yLimits = new Tuple<int, int>(firstTileY, secondTileY);
+
+                    foreach (WrapPanel panelChild in mapGrid.Children)
+                    {
+                        foreach (Rectangle rectangleChild in panelChild.Children)
                         {
-                            if (currentY >= yLimits.Item1 && currentY <= yLimits.Item2)
+                            // Get the TAG of the Rectangle (tag contains coordinates)
+                            String[] currentCoo = rectangleChild.Tag.ToString().Split('/');
+                            int currentX = int.Parse(currentCoo.First());
+                            int currentY = int.Parse(currentCoo.Last());
+
+                            if (currentX >= xLimits.Item1 && currentX <= xLimits.Item2)
                             {
-                                if (globalMap[currentX, currentY] == null)
-                                    globalMap[currentX, currentY] = new tile();
-                                    rectangleChild.Fill = setRectangleColor(currentX, currentY);
-                                // If the color was never used before, add it to the list of usedColors
-                                if (usedColors.IndexOf(color) < 0)
-                                    usedColors.Add(color);
+                                if (currentY >= yLimits.Item1 && currentY <= yLimits.Item2)
+                                {
+                                    if (globalMap[currentX, currentY] == null)
+                                        globalMap[currentX, currentY] = new tile();
+                                    rectangleChild.Fill = setRectangleSprite(currentX, currentY);
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            firstTileX = -1;
-            firstTileY = -1;
-            hasBeenModified = true;
+                firstTileX = -1;
+                firstTileY = -1;
+                hasBeenModified = true;
+            }
         }
 
-        // Define the tile's color
-        private SolidColorBrush setRectangleColor(int x, int y)
+        // Define the tile's sprite
+        private ImageBrush setRectangleSprite(int x, int y)
         {
-            if (globalMap[x, y].tileColor == color)
+            if (globalMap[x, y].tileSprite == sprite)
             {
                 globalMap[x, y] = null;
-                return (SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor));
+                return (sprite);//(SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor));
             }
-            globalMap[x, y].tileColor = color;
-            return (new SolidColorBrush(color));
+            globalMap[x, y].tileSprite = sprite;
+            return (sprite);
         }
 
-        private void coloredButton_Click(object sender, RoutedEventArgs e)
+        private void spriteButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Controls.Button ClickedButton = (System.Windows.Controls.Button)e.OriginalSource;
+            System.Windows.Shapes.Rectangle ClickedSprite = (System.Windows.Shapes.Rectangle)e.OriginalSource;
 
-            color = (Color)ColorConverter.ConvertFromString(ClickedButton.Tag.ToString());
-            selectedColor.Fill = (SolidColorBrush)new BrushConverter().ConvertFrom(ClickedButton.Tag.ToString());
+            sprite = (ImageBrush)ClickedSprite.Fill;
+            selectedSprite.Fill = ClickedSprite.Fill;
         }
 
         // Display a menu to chose between creating a new map or loading an existing saved one

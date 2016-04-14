@@ -29,7 +29,7 @@ namespace MapEditor
 
         public void setContent(string fileName)
         {
-            errorMessage.Content = "Config file " + fileName + " not found.";
+            errorMessage.Content = "Spritesheet " + fileName + " not found.";
         }
 
         // Validate and open the selected settings file
@@ -50,7 +50,7 @@ namespace MapEditor
         {
             OpenFileDialog openFilePopup = new OpenFileDialog();
 
-            openFilePopup.Filter = "Text files (*.txt)|*.txt";
+            openFilePopup.Filter = "PNG Files (*.png)|*.png";
             openFilePopup.Title = "Open a settings file";
             if (openFilePopup.ShowDialog() == true)
             {

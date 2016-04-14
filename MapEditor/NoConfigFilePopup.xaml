@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="Error" Height="200" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Grid Margin="0,0,-0.4,0" Width="291">
-        <Label x:Name="errorMessage" Content="Config file not found." Margin="16,19,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="SemiBold" Width="251" HorizontalAlignment="Left" HorizontalContentAlignment="Center"/>
-        <Label x:Name="errorMessage_Copy" Content="Select a new config file :" Margin="16,66,0,0" VerticalAlignment="Top" FontWeight="SemiBold" Width="251" HorizontalAlignment="Left"/>
+        <Label x:Name="errorMessage" Content="Spritesheet not found." Margin="16,19,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="SemiBold" Width="251" HorizontalAlignment="Left" HorizontalContentAlignment="Center"/>
+        <Label x:Name="errorMessage_Copy" Content="Select a new spritesheet :" Margin="16,66,0,0" VerticalAlignment="Top" FontWeight="SemiBold" Width="251" HorizontalAlignment="Left"/>
         <Button x:Name="validateButton" Content="Validate" HorizontalAlignment="Left" Margin="114,131,0,0" VerticalAlignment="Top" Width="75" Click="validateButton_Click"/>
         <Button x:Name="cancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="201,131,0,0" VerticalAlignment="Top" Width="75" Click="cancelButton_Click"/>
         <Button x:Name="browseFileButton" Content="Browse" HorizontalAlignment="Left" Margin="22,97,0,0" VerticalAlignment="Top" Width="75" Click="browseFileButton_Click"/>

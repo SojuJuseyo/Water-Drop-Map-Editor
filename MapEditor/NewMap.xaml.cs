@@ -40,7 +40,7 @@ namespace MapEditor
             else
                 mapNameTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
 
-            if (!string.IsNullOrEmpty(xSizeTextBox.Text))
+            if (!string.IsNullOrEmpty(xSizeTextBox.Text) && xSizeTextBox.Text.All(char.IsDigit))
             {
                 xSize = int.Parse(xSizeTextBox.Text);
                 if (xSize <= 0 || xSize > 50)
@@ -52,7 +52,7 @@ namespace MapEditor
             else
                 xSizeTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
 
-            if (!string.IsNullOrEmpty(ySizeTextBox.Text))
+            if (!string.IsNullOrEmpty(ySizeTextBox.Text) && ySizeTextBox.Text.All(char.IsDigit))
             {
                 ySize = int.Parse(ySizeTextBox.Text);
                 if (ySize <= 0 || ySize > 50)

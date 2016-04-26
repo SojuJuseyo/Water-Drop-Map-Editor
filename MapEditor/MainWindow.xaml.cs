@@ -69,6 +69,8 @@ namespace MapEditor
         public MainWindow()
         {
             InitializeComponent();
+
+            Application.Current.MainWindow.WindowState = WindowState.Maximized;
         }
 
         // Creation of a new map
@@ -102,11 +104,6 @@ namespace MapEditor
 
                 // Deciding the size of the rectangles (tiles)
                 int tileSize = 32;
-                
-                if (mapWidth > 16 || mapHeight > 16)
-                    gridSplitter.Margin = new Thickness(430, 27, 0, 0);
-                else
-                    gridSplitter.Margin = new Thickness(445, 27, 0, 0);
                     
                 for (int j = 0; j < mapHeight; j++)
                 {
@@ -186,11 +183,6 @@ namespace MapEditor
 
                     // Deciding the size of the rectangles (tiles)
                     tileSize = 32;
-
-                    if (mapWidth > 16 || mapHeight > 16)
-                        gridSplitter.Margin = new Thickness(430, 27, 0, 0);
-                    else
-                        gridSplitter.Margin = new Thickness(445, 27, 0, 0);
 
                     loadButtonsFromFile();
 

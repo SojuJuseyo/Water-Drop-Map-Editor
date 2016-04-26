@@ -7,9 +7,6 @@
         mc:Ignorable="d"
         Title="Water Drop Project Map Editor" Height="620" Width="1024" MinHeight="620" MinWidth="1024" Loaded="MainWindow_Loaded" Closing="editorClosing">
     <Grid>
-        <Button x:Name="audioButton" Margin="396,41,586.6,516" Visibility="Hidden" Click="audioButton_Click">
-            <Image Source="/Resources/audioIcon.png" />
-        </Button>
         <Menu DockPanel.Dock="Top" Margin="0" Height="25" VerticalAlignment="Top" BorderThickness="0,0,0,1" BorderBrush="#FF9C9898">
             <MenuItem Header="_File" Margin="0" Padding="7,2,8,6">
                 <MenuItem x:Name="newButton" Header="_New" Click="MenuFileNew_Click"/>
@@ -17,12 +14,15 @@
                 <MenuItem x:Name="saveButton" Header="_Save" Click="MenuFileNew_Save" IsEnabled="False"/>
             </MenuItem>
         </Menu>
-        <ScrollViewer Margin="0,27,-0.4,0" Focusable="False" HorizontalAlignment="Right" Name="ScrollViewer1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" CanContentScroll="True">
-            <StackPanel Margin="0,0,5,0" MouseLeftButtonDown="setTileTexture" x:Name="mapGrid" HorizontalAlignment="Right" VerticalAlignment="Top" Width="550" Height="550" MouseLeftButtonUp="setTileTextureApply"/>
+        <ScrollViewer Focusable="False" Margin="430,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="ScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" CanContentScroll="True" MinWidth="550" MinHeight="550">
+            <StackPanel Margin="0,0,5,0" MouseLeftButtonDown="setTileTexture" x:Name="mapGrid" HorizontalAlignment="Left" VerticalAlignment="Top" Width="{Binding ActualWidth, ElementName=ScrollViewer}" Height="Auto" MouseLeftButtonUp="setTileTextureApply"/>
         </ScrollViewer>
-        <GridSplitter x:Name="gridSplitter" HorizontalAlignment="Left" Margin="445,27,0,0" VerticalAlignment="Top" Width="2" Background="#FFCCCCCC" Height="554" Visibility="Hidden"  Focusable="False" IsEnabled="False"/>
+        <GridSplitter x:Name="gridSplitter" HorizontalAlignment="Left" Margin="420,27,0,0" VerticalAlignment="Top" Width="2" Background="#FFCCCCCC" MinHeight="554" Height="{Binding ActualHeight, ElementName=ScrollViewer}" Visibility="Hidden"  Focusable="False" IsEnabled="False"/>
         <Label x:Name="selectedSpriteLabel" Content="Currently selected :" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Height="35" Width="124" FontSize="14" FontStyle="Italic" VerticalContentAlignment="Center" Visibility="Hidden"/>
         <Rectangle x:Name="selectedSprite" Fill="White" HorizontalAlignment="Left" Height="35" Margin="138,37,0,0" Stroke="#FFA6A4A4" VerticalAlignment="Top" Width="35" StrokeThickness="0"/>
+        <Button x:Name="audioButton" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="375,37,0,0" Visibility="Hidden" Click="audioButton_Click" Width="35" Height="35">
+            <Image Source="/Resources/audioIcon.png" />
+        </Button>
         <StackPanel x:Name="tileSelectionPanel" HorizontalAlignment="Left" Height="491" Margin="10,91,0,0" VerticalAlignment="Top" Width="425"/>
         <Label x:Name="informations" Content="Welcome to the Water Drop Project Map Editor.&#xD;&#xA;&#xD;&#xA;As the editor isn't in its final version yet, feel free to give us feedback or to report any issues you could encounter at&#xD;&#xA;t.raballand@gmail.com&#xD;&#xA;&#xD;&#xA;- The Water Drop Project Team" HorizontalAlignment="Left" Margin="89,122,0,0" VerticalAlignment="Top" Height="172" Width="845" FontSize="16"/>
     </Grid>

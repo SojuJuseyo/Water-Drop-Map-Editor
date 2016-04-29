@@ -39,6 +39,15 @@ namespace MapEditor
         public string mapName { get; set; }
         public string mapAudioPath { get; set; }
 
+        public enum SpecialTile
+        {
+            HEATZONE,
+            NONE
+        }
+
+        public Brush specialTile { get; set; }
+        public SpecialTile specialTileType { get; set; }
+
         public ImageBrush sprite { get; set; }
         public List<ImageBrush> listSprites = new List<ImageBrush>();
         public Dictionary<int, ImageBrush> usedSprites = new Dictionary<int, ImageBrush>();
@@ -51,6 +60,8 @@ namespace MapEditor
         {
             [JsonIgnore]
             public ImageBrush tileSprite { get; set; }
+            [JsonIgnore]
+            public bool heatZone { get; set; }
             public int coordx { get; set; }
             public int coordy { get; set; }
         }
@@ -64,6 +75,7 @@ namespace MapEditor
             public string size { get; set; }
             public string audio { get; set; }
             public Dictionary<int, List<tile>> tileList { get; set; }
+            public List<tile> heatZonesList { get; set; }
         }
 
         public MainWindow()
@@ -104,10 +116,11 @@ namespace MapEditor
 
                 // Deciding the size of the rectangles (tiles)
                 int tileSize = 32;
-                    
+
                 for (int j = 0; j < mapHeight; j++)
                 {
                     WrapPanel panel = new WrapPanel();
+
                     for (int i = 0; i < mapWidth; i++)
                     {
                         panel.Children.Add(new Rectangle { Tag = i + "/" + (mapHeight - j - 1), Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFF4F4F5"), Stroke = new SolidColorBrush(Colors.Black), Margin = new Thickness(0, 2, 2, 0) });
@@ -119,6 +132,7 @@ namespace MapEditor
                 tileSelectionPanel.Children.Clear();
 
                 loadButtonsFromFile();
+                loadSpecialTiles();
                 gridSplitter.Visibility = Visibility.Visible;
                 selectedSpriteLabel.Visibility = Visibility.Visible;
                 audioButton.Visibility = Visibility.Visible;
@@ -313,6 +327,21 @@ namespace MapEditor
                 savePath = (saveFilePopup.FileName != "" ? saveFilePopup.FileName : lastSavePath);
 
                 Dictionary<int, List<tile>> sortedTileList = new Dictionary<int, List<tile>>();
+                List<tile> heatZoneTileList = new List<tile>();
+
+                for (int j = 0; j < mapHeight; j++)
+                {
+                    for (int i = 0; i < mapWidth; i++)
+                    {
+                        if (globalMap[i, j] != null)
+                        {
+                            tile specialTile = new tile { coordx = i, coordy = j };
+
+                            if (globalMap[i, j].heatZone == true)
+                                heatZoneTileList.Add(specialTile);
+                        }
+                    }
+                }
 
                 for (int k = 0; k < listSprites.Count; k++)
                 {
@@ -324,25 +353,28 @@ namespace MapEditor
                         {
                             if (globalMap[i, j] != null)
                             {
-                                if (globalMap[i, j].tileSprite.ImageSource == listSprites[k].ImageSource)
+                                if (globalMap[i, j].tileSprite != null)
                                 {
-                                    singleSpriteTileList.Add(new tile()
+                                    if (globalMap[i, j].tileSprite.ImageSource == listSprites[k].ImageSource)
                                     {
-                                        coordx = i,
-                                        coordy = j
-                                    });
-                                }
-                                else
-                                {
-                                    if (usedSprites.ContainsKey(k))
-                                    {
-                                        if (globalMap[i, j].tileSprite == usedSprites[k])
+                                        singleSpriteTileList.Add(new tile()
                                         {
-                                            singleSpriteTileList.Add(new tile()
+                                            coordx = i,
+                                            coordy = j
+                                        });
+                                    }
+                                    else
+                                    {
+                                        if (usedSprites.ContainsKey(k))
+                                        {
+                                            if (globalMap[i, j].tileSprite == usedSprites[k])
                                             {
-                                                coordx = i,
-                                                coordy = j
-                                            });
+                                                singleSpriteTileList.Add(new tile()
+                                                {
+                                                    coordx = i,
+                                                    coordy = j
+                                                });
+                                            }
                                         }
                                     }
                                 }
@@ -352,6 +384,7 @@ namespace MapEditor
 
                     if (singleSpriteTileList.Count != 0)
                         sortedTileList.Add(k, singleSpriteTileList);
+
                 }
 
                 MapInfos map = new MapInfos();
@@ -360,6 +393,7 @@ namespace MapEditor
                 map.size = mapWidth + "/" + mapHeight;
                 map.audio = mapAudioPath;
                 map.tileList = sortedTileList;
+                map.heatZonesList = heatZoneTileList;
 
                 string json = JsonConvert.SerializeObject(map, Formatting.Indented);
                 File.WriteAllText(savePath, json);
@@ -412,6 +446,22 @@ namespace MapEditor
 
         }
 
+        // Load special tiles like Heat zones
+        private void loadSpecialTiles()
+        {
+            WrapPanel panel = new WrapPanel();
+
+            Label heatZoneLabel = new Label { Content = "Heat Zone :", FontSize = 15, Height = 48, VerticalContentAlignment = VerticalAlignment.Center };
+            Rectangle heatZoneRectangle = new Rectangle { Width = 48, Height = 48, Stroke = new SolidColorBrush(Colors.Orange), Fill = new SolidColorBrush(Colors.Orange), Margin = new Thickness(5, 5, 5, 5) };
+
+            heatZoneRectangle.MouseLeftButtonDown += specialTile_Click;
+
+            panel.Children.Add(heatZoneLabel);
+            panel.Children.Add(heatZoneRectangle);
+
+            tileSelectionPanel.Children.Add(panel);
+        }
+
         // Remove special characters
         public string removeSpecialCharacters(string str)
         {
@@ -455,7 +505,12 @@ namespace MapEditor
                 {
                     if (globalMap[secondTileX, secondTileY] == null)
                         globalMap[secondTileX, secondTileY] = new tile();
-                    ClickedRectangle.Fill = setRectangleSprite(secondTileX, secondTileY);
+
+                    // Check if it's a special tile or not
+                    if (specialTile != null)
+                        ClickedRectangle = setSpecialTile(ClickedRectangle,secondTileX, secondTileY);
+                    else
+                        ClickedRectangle.Fill = setRectangleSprite(secondTileX, secondTileY);
                 }
                 else
                 {
@@ -488,7 +543,12 @@ namespace MapEditor
                                 {
                                     if (globalMap[currentX, currentY] == null)
                                         globalMap[currentX, currentY] = new tile();
-                                    rectangleChild.Fill = setRectangleSprite(currentX, currentY);
+
+                                    // Check if it's a special tile or not
+                                    if (specialTile != null)
+                                        ClickedRectangle = setSpecialTile(ClickedRectangle, secondTileX, secondTileY);
+                                    else
+                                        ClickedRectangle.Fill = setRectangleSprite(secondTileX, secondTileY);
                                 }
                             }
                         }
@@ -502,23 +562,62 @@ namespace MapEditor
         }
 
         // Define the tile's sprite
-        private ImageBrush setRectangleSprite(int x, int y)
+        private Brush setRectangleSprite(int x, int y)
         {
             if (globalMap[x, y].tileSprite == sprite)
             {
                 globalMap[x, y] = null;
-                return (sprite);//(SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor));
+                return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
             }
             globalMap[x, y].tileSprite = sprite;
             return (sprite);
         }
 
+        // Set the special tile to the rectangle
+        private Rectangle setSpecialTile(Rectangle ClickedRectangle, int x, int y)
+        {
+            if (specialTileType == SpecialTile.HEATZONE)
+            {
+                if (ClickedRectangle.Name == SpecialTile.HEATZONE.ToString())
+                {
+                    ClickedRectangle.Name = SpecialTile.NONE.ToString();
+                    ClickedRectangle.Stroke = new SolidColorBrush(Colors.Black);
+                    ClickedRectangle.StrokeThickness = 1;
+                    globalMap[x, y].heatZone = false;
+                }
+                else
+                {
+                    ClickedRectangle.Name = SpecialTile.HEATZONE.ToString();
+                    ClickedRectangle.Stroke = new SolidColorBrush(Colors.Orange);
+                    ClickedRectangle.StrokeThickness = 2;
+                    globalMap[x, y].heatZone = true;
+                }
+            }
+
+            return (ClickedRectangle);
+        }
+
+        // When you click on a sprite from the list
         private void spriteButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Shapes.Rectangle ClickedSprite = (System.Windows.Shapes.Rectangle)e.OriginalSource;
 
             sprite = (ImageBrush)ClickedSprite.Fill;
+            // Reset the special tile
+            specialTile = null;
             selectedSprite.Fill = ClickedSprite.Fill;
+        }
+
+        // WHen you click on a special tile from the list
+        private void specialTile_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Shapes.Rectangle ClickedTile = (System.Windows.Shapes.Rectangle)e.OriginalSource;
+
+            if (ClickedTile.Fill == new SolidColorBrush(Colors.Orange))
+                specialTileType = SpecialTile.HEATZONE;
+
+            specialTile = ClickedTile.Fill;
+            selectedSprite.Fill = ClickedTile.Fill;
         }
 
         // Display a menu to chose between creating a new map or loading an existing saved one

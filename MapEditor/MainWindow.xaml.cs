@@ -219,6 +219,22 @@ namespace MapEditor
                         }
                     }
 
+                    foreach (tile heatZone in loadedMap.heatZonesList)
+                    {
+                        if (newGlobalMap[heatZone.coordx, heatZone.coordy] != null)
+                            newGlobalMap[heatZone.coordx, heatZone.coordy].heatZone = true;
+                        else
+                        {
+                            tile newTile = new tile();
+                            newTile.coordx = heatZone.coordx;
+                            newTile.coordy = heatZone.coordy;
+                            newTile.heatZone = true;
+
+                            newGlobalMap[heatZone.coordx, heatZone.coordy] = newTile;
+                        }
+
+                    }
+
                 }
                 catch (Exception)
                 {
@@ -257,8 +273,12 @@ namespace MapEditor
 
                 foreach (WrapPanel panelChild in mapGrid.Children)
                 {
-                    foreach (Rectangle rectangleChild in panelChild.Children)
+                    //foreach (Rectangle rectangleChild in panelChild.Children)
+                    //Old
+                    for (int i = 0; i < panelChild.Children.Count; i++)
                     {
+                        Rectangle rectangleChild = (Rectangle)panelChild.Children[i];
+
                         // Get the TAG of the Rectangle (tag contains coordinates)
                         String[] currentCoo = rectangleChild.Tag.ToString().Split('/');
                         int currentX = int.Parse(currentCoo.First());
@@ -266,7 +286,10 @@ namespace MapEditor
 
                         if (globalMap[currentX, currentY] != null)
                         {
-                            rectangleChild.Fill = globalMap[currentX, currentY].tileSprite;
+                            if (globalMap[currentX, currentY].tileSprite != null)
+                                rectangleChild.Fill = globalMap[currentX, currentY].tileSprite;
+                            if (globalMap[currentX, currentY].heatZone == true)
+                                rectangleChild = setSpecialTile(rectangleChild, currentX, currentY);
                         }
                     }
                 }
@@ -278,6 +301,7 @@ namespace MapEditor
                 tileSelectionPanel.Children.Clear();
 
                 loadButtonsFromFile();
+                loadSpecialTiles();
                 gridSplitter.Visibility = Visibility.Visible;
                 selectedSpriteLabel.Visibility = Visibility.Visible;
                 audioButton.Visibility = Visibility.Visible;
@@ -530,8 +554,13 @@ namespace MapEditor
 
                     foreach (WrapPanel panelChild in mapGrid.Children)
                     {
-                        foreach (Rectangle rectangleChild in panelChild.Children)
+                        //foreach (Rectangle rectangleChild in panelChild.Children)
+                        //Au dessus c'est old mais on garde au cas ou
+                        for (int i = 0; i < panelChild.Children.Count; i++)
                         {
+                            // Get the rectangle as we don't use a foreach anymore because of C#
+                            Rectangle rectangleChild = (Rectangle)panelChild.Children[i];
+
                             // Get the TAG of the Rectangle (tag contains coordinates)
                             String[] currentCoo = rectangleChild.Tag.ToString().Split('/');
                             int currentX = int.Parse(currentCoo.First());
@@ -546,9 +575,9 @@ namespace MapEditor
 
                                     // Check if it's a special tile or not
                                     if (specialTile != null)
-                                        ClickedRectangle = setSpecialTile(ClickedRectangle, secondTileX, secondTileY);
+                                        rectangleChild = setSpecialTile(rectangleChild, currentX, currentY);
                                     else
-                                        ClickedRectangle.Fill = setRectangleSprite(secondTileX, secondTileY);
+                                        rectangleChild.Fill = setRectangleSprite(currentX, currentY);
                                 }
                             }
                         }
@@ -569,32 +598,33 @@ namespace MapEditor
                 globalMap[x, y] = null;
                 return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
             }
+
             globalMap[x, y].tileSprite = sprite;
             return (sprite);
         }
 
         // Set the special tile to the rectangle
-        private Rectangle setSpecialTile(Rectangle ClickedRectangle, int x, int y)
+        private Rectangle setSpecialTile(Rectangle rectangle, int x, int y)
         {
             if (specialTileType == SpecialTile.HEATZONE)
             {
-                if (ClickedRectangle.Name == SpecialTile.HEATZONE.ToString())
+                if (rectangle.Name == SpecialTile.HEATZONE.ToString())
                 {
-                    ClickedRectangle.Name = SpecialTile.NONE.ToString();
-                    ClickedRectangle.Stroke = new SolidColorBrush(Colors.Black);
-                    ClickedRectangle.StrokeThickness = 1;
+                    rectangle.Name = SpecialTile.NONE.ToString();
+                    rectangle.Stroke = new SolidColorBrush(Colors.Black);
+                    rectangle.StrokeThickness = 1;
                     globalMap[x, y].heatZone = false;
                 }
                 else
                 {
-                    ClickedRectangle.Name = SpecialTile.HEATZONE.ToString();
-                    ClickedRectangle.Stroke = new SolidColorBrush(Colors.Orange);
-                    ClickedRectangle.StrokeThickness = 2;
+                    rectangle.Name = SpecialTile.HEATZONE.ToString();
+                    rectangle.Stroke = new SolidColorBrush(Colors.Orange);
+                    rectangle.StrokeThickness = 2;
                     globalMap[x, y].heatZone = true;
                 }
             }
 
-            return (ClickedRectangle);
+            return (rectangle);
         }
 
         // When you click on a sprite from the list

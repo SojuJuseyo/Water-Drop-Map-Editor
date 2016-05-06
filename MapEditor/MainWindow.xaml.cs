@@ -544,7 +544,7 @@ namespace MapEditor
                 if (firstTileX == -1 && firstTileY == -1)
                 {
                     if (globalMap[secondTileX, secondTileY] == null)
-                        globalMap[secondTileX, secondTileY] = new tile();
+                        globalMap[secondTileX, secondTileY] = new tile { collidable = true };
 
                     // Check if it's a special tile or not
                     if (specialTile != null)
@@ -587,7 +587,7 @@ namespace MapEditor
                                 if (currentY >= yLimits.Item1 && currentY <= yLimits.Item2)
                                 {
                                     if (globalMap[currentX, currentY] == null)
-                                        globalMap[currentX, currentY] = new tile();
+                                        globalMap[currentX, currentY] = new tile { collidable = true };
 
                                     // Check if it's a special tile or not
                                     if (specialTile != null)

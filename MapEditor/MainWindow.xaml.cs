@@ -219,6 +219,7 @@ namespace MapEditor
                             newTile.coordx = elem.coordx;
                             newTile.coordy = elem.coordy;
                             newTile.tileSprite = listSprites[tileIndex];
+                            newTile.collidable = elem.collidable;
 
                             if (!usedSprites.ContainsKey(tileIndex))
                                 usedSprites.Add(tileIndex, listSprites[tileIndex]);
@@ -296,8 +297,14 @@ namespace MapEditor
                         {
                             if (globalMap[currentX, currentY].tileSprite != null)
                                 rectangleChild.Fill = globalMap[currentX, currentY].tileSprite;
+                            if (globalMap[currentX, currentY].collidable == false)
+                            {
+                                rectangleChild = setGivenSpecialTile(rectangleChild, currentX, currentY, SpecialTile.NON_COLLIDABLE);
+                            }
                             if (globalMap[currentX, currentY].heatZone == true)
-                                rectangleChild = setSpecialTile(rectangleChild, currentX, currentY);
+                            {
+                                rectangleChild = setGivenSpecialTile(rectangleChild, currentX, currentY, SpecialTile.HEATZONE);
+                            }
                         }
                     }
                 }
@@ -671,6 +678,28 @@ namespace MapEditor
                     rectangle.StrokeThickness = 3;
                     globalMap[x, y].collidable = false;
                 }
+            }
+
+            return (rectangle);
+        }
+
+        // Set the special tile to the rectangle
+        private Rectangle setGivenSpecialTile(Rectangle rectangle, int x, int y, SpecialTile SpecialTile)
+        {
+            if (SpecialTile == SpecialTile.HEATZONE)
+            {
+                    rectangle.Name = SpecialTile.HEATZONE.ToString();
+                    rectangle.Stroke = new SolidColorBrush(Colors.Orange);
+                    rectangle.StrokeThickness = 2;
+                    globalMap[x, y].heatZone = true;
+            }
+
+            if (SpecialTile == SpecialTile.NON_COLLIDABLE)
+            {
+                    rectangle.Name = SpecialTile.NON_COLLIDABLE.ToString();
+                    rectangle.Stroke = new SolidColorBrush(Colors.DarkGray);
+                    rectangle.StrokeThickness = 3;
+                    globalMap[x, y].collidable = false;
             }
 
             return (rectangle);

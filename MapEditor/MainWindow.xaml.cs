@@ -21,6 +21,10 @@ namespace MapEditor
         public const string defaultColor = "#FFF4F4F5";
         public string defaultSpriteSheetFile = "../spritesheet.png";
 
+        // Default position of the player on the spritesheet
+        public const int defaultPlayerSpritePosition = 5;
+        public int numberPlayerOnMap { get; set; }
+
         // Cancel the exit of the map editor if you click on the red cross of the popup window
         public bool cancelExit { get; set; }
         // Basically cancel the creation of a new map of the opening of a map if you click on the red cross
@@ -41,8 +45,9 @@ namespace MapEditor
 
         public enum SpecialTile
         {
+            NONE,
             HEATZONE,
-            NONE
+            NON_COLLIDABLE
         }
 
         public Brush specialTile { get; set; }
@@ -62,6 +67,8 @@ namespace MapEditor
             public ImageBrush tileSprite { get; set; }
             [JsonIgnore]
             public bool heatZone { get; set; }
+
+            public bool collidable { get; set; }
             public int coordx { get; set; }
             public int coordy { get; set; }
         }
@@ -140,6 +147,7 @@ namespace MapEditor
                 lastSavePath = null;
                 hasBeenModified = false;
                 cancelNextAction = false;
+                numberPlayerOnMap = 0;
 
                 selectedSprite.Fill = listSprites[0];
                 sprite = listSprites[0];
@@ -359,7 +367,7 @@ namespace MapEditor
                     {
                         if (globalMap[i, j] != null)
                         {
-                            tile specialTile = new tile { coordx = i, coordy = j };
+                            tile specialTile = new tile { coordx = i, coordy = j, collidable = globalMap[i, j].collidable };
 
                             if (globalMap[i, j].heatZone == true)
                                 heatZoneTileList.Add(specialTile);
@@ -384,7 +392,8 @@ namespace MapEditor
                                         singleSpriteTileList.Add(new tile()
                                         {
                                             coordx = i,
-                                            coordy = j
+                                            coordy = j,
+                                            collidable = globalMap[i, j].collidable
                                         });
                                     }
                                     else
@@ -396,7 +405,8 @@ namespace MapEditor
                                                 singleSpriteTileList.Add(new tile()
                                                 {
                                                     coordx = i,
-                                                    coordy = j
+                                                    coordy = j,
+                                                    collidable = globalMap[i, j].collidable
                                                 });
                                             }
                                         }
@@ -476,12 +486,18 @@ namespace MapEditor
             WrapPanel panel = new WrapPanel();
 
             Label heatZoneLabel = new Label { Content = "Heat Zone :", FontSize = 15, Height = 48, VerticalContentAlignment = VerticalAlignment.Center };
-            Rectangle heatZoneRectangle = new Rectangle { Width = 48, Height = 48, Stroke = new SolidColorBrush(Colors.Orange), Fill = new SolidColorBrush(Colors.Orange), Margin = new Thickness(5, 5, 5, 5) };
-
+            Rectangle heatZoneRectangle = new Rectangle { Width = 48, Height = 48, StrokeThickness = 2, Stroke = new SolidColorBrush(Colors.Orange), Fill = new SolidColorBrush(Colors.White), Margin = new Thickness(5, 5, 5, 5), Name = SpecialTile.HEATZONE.ToString() };
             heatZoneRectangle.MouseLeftButtonDown += specialTile_Click;
+
+            Label nonCollidableBlockLabel = new Label { Content = "Non-Collidable Block :", FontSize = 15, Height = 48, VerticalContentAlignment = VerticalAlignment.Center };
+            Rectangle nonCollidableBlockRectangle = new Rectangle { Width = 48, Height = 48, StrokeThickness = 2, Stroke = new SolidColorBrush(Colors.DarkGray), Fill = new SolidColorBrush(Colors.White), Margin = new Thickness(5, 5, 5, 5), Name = SpecialTile.NON_COLLIDABLE.ToString() };
+            nonCollidableBlockRectangle.MouseLeftButtonDown += specialTile_Click;
 
             panel.Children.Add(heatZoneLabel);
             panel.Children.Add(heatZoneRectangle);
+
+            panel.Children.Add(nonCollidableBlockLabel);
+            panel.Children.Add(nonCollidableBlockRectangle);
 
             tileSelectionPanel.Children.Add(panel);
         }
@@ -595,12 +611,27 @@ namespace MapEditor
         {
             if (globalMap[x, y].tileSprite == sprite)
             {
+                // Check if the selected sprite is the one of a player
+                if (sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource)
+                    numberPlayerOnMap--;
+
                 globalMap[x, y] = null;
                 return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
             }
 
+            // Check if we are putting a player
+            if (sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource && numberPlayerOnMap > 0)
+            {
+                if (globalMap[x, y].tileSprite == null)
+                    return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
+                return (globalMap[x, y].tileSprite);
+            }
+            else if (sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource)
+                numberPlayerOnMap++;
+
             globalMap[x, y].tileSprite = sprite;
             return (sprite);
+
         }
 
         // Set the special tile to the rectangle
@@ -624,6 +655,24 @@ namespace MapEditor
                 }
             }
 
+            if (specialTileType == SpecialTile.NON_COLLIDABLE)
+            {
+                if (rectangle.Name == SpecialTile.NON_COLLIDABLE.ToString())
+                {
+                    rectangle.Name = SpecialTile.NON_COLLIDABLE.ToString();
+                    rectangle.Stroke = new SolidColorBrush(Colors.Black);
+                    rectangle.StrokeThickness = 1;
+                    globalMap[x, y].collidable = true;
+                }
+                else
+                {
+                    rectangle.Name = SpecialTile.NON_COLLIDABLE.ToString();
+                    rectangle.Stroke = new SolidColorBrush(Colors.DarkGray);
+                    rectangle.StrokeThickness = 3;
+                    globalMap[x, y].collidable = false;
+                }
+            }
+
             return (rectangle);
         }
 
@@ -636,6 +685,8 @@ namespace MapEditor
             // Reset the special tile
             specialTile = null;
             selectedSprite.Fill = ClickedSprite.Fill;
+            selectedSprite.Stroke = null;
+            selectedSprite.StrokeThickness = 0;
         }
 
         // WHen you click on a special tile from the list
@@ -643,11 +694,20 @@ namespace MapEditor
         {
             System.Windows.Shapes.Rectangle ClickedTile = (System.Windows.Shapes.Rectangle)e.OriginalSource;
 
-            if (ClickedTile.Fill == new SolidColorBrush(Colors.Orange))
+            if (ClickedTile.Name == SpecialTile.HEATZONE.ToString())
+            {
                 specialTileType = SpecialTile.HEATZONE;
+            }
+
+            if (ClickedTile.Name == SpecialTile.NON_COLLIDABLE.ToString())
+            {
+                specialTileType = SpecialTile.NON_COLLIDABLE;
+            }
 
             specialTile = ClickedTile.Fill;
             selectedSprite.Fill = ClickedTile.Fill;
+            selectedSprite.Stroke = ClickedTile.Stroke;
+            selectedSprite.StrokeThickness = ClickedTile.StrokeThickness;
         }
 
         // Display a menu to chose between creating a new map or loading an existing saved one
@@ -681,7 +741,7 @@ namespace MapEditor
                     }
             }
         }
-
+        
         // Handle the exit of the map editor
         private void editorClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {

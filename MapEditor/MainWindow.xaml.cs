@@ -54,6 +54,9 @@ namespace MapEditor
         public SpecialTile specialTileType { get; set; }
 
         public ImageBrush sprite { get; set; }
+        // Because of the bug (usedSprites, listSprites, and sprite) we need an int to know where to get the sprite from
+        public int spriteInt { get; set; }
+
         public List<ImageBrush> listSprites = new List<ImageBrush>();
         public Dictionary<int, ImageBrush> usedSprites = new Dictionary<int, ImageBrush>();
 
@@ -151,6 +154,7 @@ namespace MapEditor
 
                 selectedSprite.Fill = listSprites[0];
                 sprite = listSprites[0];
+                spriteInt = 0;
 
                 canClick = true;
 
@@ -223,6 +227,8 @@ namespace MapEditor
 
                             if (!usedSprites.ContainsKey(tileIndex))
                                 usedSprites.Add(tileIndex, listSprites[tileIndex]);
+                            else if (usedSprites[tileIndex] != listSprites[tileIndex])
+                                usedSprites[tileIndex] = listSprites[tileIndex];
 
                             newGlobalMap[elem.coordx, elem.coordy] = newTile;
                         }
@@ -326,6 +332,7 @@ namespace MapEditor
 
                 selectedSprite.Fill = listSprites[0];
                 sprite = listSprites[0];
+                spriteInt = 0;
 
                 // Thread system to prevent miss clicking while opening a map
                 System.Threading.Timer timer = null;
@@ -461,8 +468,12 @@ namespace MapEditor
                     Rectangle spriteRectangle = new Rectangle { Width = 48, Height = 48, Stroke = new SolidColorBrush(Colors.Black), Margin = new Thickness(5, 5, 5, 5) };
                     spriteRectangle.Fill = new ImageBrush(singleSprite);
                     spriteRectangle.MouseLeftButtonDown += spriteButton_Click;
+                    spriteRectangle.Tag = i;
 
                     listSprites.Add(new ImageBrush(singleSprite));
+
+                    if (!usedSprites.ContainsKey(i))
+                        usedSprites.Add(i, new ImageBrush(singleSprite));
 
                     panel.Children.Add(spriteRectangle);
                 }
@@ -616,7 +627,7 @@ namespace MapEditor
         // Define the tile's sprite
         private Brush setRectangleSprite(int x, int y)
         {
-            if (globalMap[x, y].tileSprite == sprite)
+            if (globalMap[x, y].tileSprite == sprite || globalMap[x, y].tileSprite == usedSprites[spriteInt])
             {
                 // Check if the selected sprite is the one of a player
                 if (sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource)
@@ -626,11 +637,13 @@ namespace MapEditor
                 return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
             }
 
+
             // Check if we are putting a player
             if (sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource && numberPlayerOnMap > 0)
             {
                 if (globalMap[x, y].tileSprite == null)
                     return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
+
                 return (globalMap[x, y].tileSprite);
             }
             else if (sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource)
@@ -710,7 +723,8 @@ namespace MapEditor
         {
             System.Windows.Shapes.Rectangle ClickedSprite = (System.Windows.Shapes.Rectangle)e.OriginalSource;
 
-            sprite = (ImageBrush)ClickedSprite.Fill;
+            spriteInt = (int)ClickedSprite.Tag;
+            sprite = listSprites[spriteInt];//(ImageBrush)ClickedSprite.Fill;
             // Reset the special tile
             specialTile = null;
             selectedSprite.Fill = ClickedSprite.Fill;

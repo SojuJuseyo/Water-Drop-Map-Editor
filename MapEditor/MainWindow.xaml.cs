@@ -661,7 +661,7 @@ namespace MapEditor
             {
                 if (rectangle.Name == SpecialTile.HEATZONE.ToString())
                 {
-                    rectangle.Name = SpecialTile.NONE.ToString();
+                    rectangle.Name = null;
                     rectangle.Stroke = new SolidColorBrush(Colors.Black);
                     rectangle.StrokeThickness = 1;
                     globalMap[x, y].heatZone = false;
@@ -679,7 +679,7 @@ namespace MapEditor
             {
                 if (rectangle.Name == SpecialTile.NON_COLLIDABLE.ToString())
                 {
-                    rectangle.Name = SpecialTile.NON_COLLIDABLE.ToString();
+                    rectangle.Name = null;
                     rectangle.Stroke = new SolidColorBrush(Colors.Black);
                     rectangle.StrokeThickness = 1;
                     globalMap[x, y].collidable = true;

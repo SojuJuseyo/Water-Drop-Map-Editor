@@ -213,6 +213,7 @@ namespace MapEditor
                             newTile.coordy = elem.coordy;
                             newTile.tileSprite = listSprites[tileIndex];
                             newTile.collidable = elem.collidable;
+                            newTile.properties = elem.properties;
 
                             if (!usedSprites.ContainsKey(tileIndex))
                                 usedSprites.Add(tileIndex, listSprites[tileIndex]);
@@ -233,10 +234,22 @@ namespace MapEditor
                             newTile.coordx = heatZone.coordx;
                             newTile.coordy = heatZone.coordy;
                             newTile.heatZone = true;
+                            newTile.properties = heatZone.properties;
 
                             newGlobalMap[heatZone.coordx, heatZone.coordy] = newTile;
                         }
 
+                    }
+
+                    foreach (tile otherTile in loadedMap.otherTileList)
+                    {
+                        tile newTile = new tile();
+                        newTile.coordx = otherTile.coordx;
+                        newTile.coordy = otherTile.coordy;
+                        newTile.collidable = otherTile.collidable;
+                        newTile.properties = otherTile.properties;
+
+                        newGlobalMap[otherTile.coordx, otherTile.coordy] = newTile;
                     }
 
                 }
@@ -644,7 +657,8 @@ namespace MapEditor
                 return (globalMap[x, y].tileSprite);
             }
             else if (sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource)
-                numberPlayerOnMap++;
+                selectedSprite.IsEnabled = false;
+            //numberPlayerOnMap++;
 
             if (globalMap[x, y].tileSprite == listSprites[defaultPlayerSpritePosition])
                 if (sprite.ImageSource != listSprites[defaultPlayerSpritePosition].ImageSource)

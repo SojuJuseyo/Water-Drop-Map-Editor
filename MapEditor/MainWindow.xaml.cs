@@ -625,6 +625,7 @@ namespace MapEditor
         // Define the tile's sprite
         private Brush setRectangleSprite(int x, int y)
         {
+            // If the tile we click on == the one we selected we need to unset it
             if (globalMap[x, y].tileSprite == sprite || globalMap[x, y].tileSprite == usedSprites[spriteInt])
             {
                 // Check if the selected sprite is the one of a player
@@ -640,11 +641,14 @@ namespace MapEditor
             {
                 if (globalMap[x, y].tileSprite == null)
                     return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
-
                 return (globalMap[x, y].tileSprite);
             }
             else if (sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource)
                 numberPlayerOnMap++;
+
+            if (globalMap[x, y].tileSprite == listSprites[defaultPlayerSpritePosition])
+                if (sprite.ImageSource != listSprites[defaultPlayerSpritePosition].ImageSource)
+                    numberPlayerOnMap--;
 
             globalMap[x, y].tileSprite = sprite;
             return (sprite);

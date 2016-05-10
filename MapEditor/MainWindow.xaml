@@ -15,7 +15,7 @@
             </MenuItem>
         </Menu>
         <ScrollViewer Focusable="False" Margin="430,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="ScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" CanContentScroll="True" MinWidth="550" MinHeight="550">
-            <StackPanel Margin="0,0,5,0" MouseLeftButtonDown="setTileTexture" x:Name="mapGrid" HorizontalAlignment="Left" VerticalAlignment="Top" Width="{Binding ActualWidth, ElementName=ScrollViewer}" Height="Auto" MouseLeftButtonUp="setTileTextureApply"/>
+            <StackPanel Margin="0,0,5,0" MouseLeftButtonDown="setTileTexture" MouseRightButtonDown="setTileProperties" x:Name="mapGrid" HorizontalAlignment="Left" VerticalAlignment="Top" Width="{Binding ActualWidth, ElementName=ScrollViewer}" Height="Auto" MouseLeftButtonUp="setTileTextureApply"/>
         </ScrollViewer>
         <GridSplitter x:Name="gridSplitter" HorizontalAlignment="Left" Margin="420,27,0,0" VerticalAlignment="Top" Width="2" Background="#FFCCCCCC" MinHeight="554" Height="{Binding ActualHeight, ElementName=ScrollViewer}" Visibility="Hidden"  Focusable="False" IsEnabled="False"/>
         <Label x:Name="selectedSpriteLabel" Content="Currently selected :" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Height="35" Width="124" FontSize="14" FontStyle="Italic" VerticalContentAlignment="Center" Visibility="Hidden"/>

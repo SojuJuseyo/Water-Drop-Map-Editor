@@ -25,3 +25,5 @@ C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Release\NoConfigFilePopup.ba
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Release\SavePopup.g.cs
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Release\SavePopup.baml
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Release\App.baml
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Release\TilePropertiesWindow.g.cs
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Release\TilePropertiesWindow.baml

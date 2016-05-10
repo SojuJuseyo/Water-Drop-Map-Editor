@@ -1,7 +1,7 @@
 ﻿MapEditor
 
 
-exe
+winexe
 C#
 .cs
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\
@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\App.xaml
-61123072280
+7-1424784701
 
-14-1491614560
+171069282102
 15-2052118173
-GenericErrorPopup.xaml;MainMenu.xaml;MainWindow.xaml;NewMap.xaml;NoConfigFilePopup.xaml;SavePopup.xaml;
+GenericErrorPopup.xaml;MainMenu.xaml;MainWindow.xaml;NewMap.xaml;NoConfigFilePopup.xaml;SavePopup.xaml;TilePropertiesWindow.xaml;
 
-False
+True
 

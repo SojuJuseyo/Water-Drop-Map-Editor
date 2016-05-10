@@ -41,3 +41,5 @@ C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\SavePopup.g.cs
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\SavePopup.baml
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\App.baml
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\MapEditor.csprojResolveAssemblyReference.cache
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\TilePropertiesWindow.g.cs
+C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\TilePropertiesWindow.baml

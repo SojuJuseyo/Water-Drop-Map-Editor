@@ -64,18 +64,6 @@ namespace MapEditor
         public int firstTileX { get; set; }
         public int firstTileY { get; set; }
 
-        public class tile
-        {
-            [JsonIgnore]
-            public ImageBrush tileSprite { get; set; }
-            [JsonIgnore]
-            public bool heatZone { get; set; }
-
-            public bool collidable { get; set; }
-            public int coordx { get; set; }
-            public int coordy { get; set; }
-        }
-
         tile[,] globalMap;
 
         // Object that will be serialized for the JSON file creation
@@ -86,6 +74,7 @@ namespace MapEditor
             public string audio { get; set; }
             public Dictionary<int, List<tile>> tileList { get; set; }
             public List<tile> heatZonesList { get; set; }
+            public List<tile> otherTileList { get; set; }
         }
 
         public MainWindow()
@@ -374,6 +363,7 @@ namespace MapEditor
 
                 Dictionary<int, List<tile>> sortedTileList = new Dictionary<int, List<tile>>();
                 List<tile> heatZoneTileList = new List<tile>();
+                List<tile> otherTileList = new List<tile>();
 
                 for (int j = 0; j < mapHeight; j++)
                 {
@@ -381,10 +371,15 @@ namespace MapEditor
                     {
                         if (globalMap[i, j] != null)
                         {
-                            tile specialTile = new tile { coordx = i, coordy = j, collidable = globalMap[i, j].collidable };
+                            tile specialTile = new tile { coordx = i, coordy = j, collidable = globalMap[i, j].collidable, properties = globalMap[i, j].properties };
 
                             if (globalMap[i, j].heatZone == true)
                                 heatZoneTileList.Add(specialTile);
+                            else
+                            {
+                                if (globalMap[i, j].properties != null && globalMap[i, j].tileSprite == null)
+                                    otherTileList.Add(specialTile);
+                            }
                         }
                     }
                 }
@@ -407,7 +402,8 @@ namespace MapEditor
                                         {
                                             coordx = i,
                                             coordy = j,
-                                            collidable = globalMap[i, j].collidable
+                                            collidable = globalMap[i, j].collidable,
+                                            properties = globalMap[i, j].properties
                                         });
                                     }
                                     else
@@ -420,7 +416,8 @@ namespace MapEditor
                                                 {
                                                     coordx = i,
                                                     coordy = j,
-                                                    collidable = globalMap[i, j].collidable
+                                                    collidable = globalMap[i, j].collidable,
+                                                    properties = globalMap[i, j].properties
                                                 });
                                             }
                                         }
@@ -442,6 +439,7 @@ namespace MapEditor
                 map.audio = mapAudioPath;
                 map.tileList = sortedTileList;
                 map.heatZonesList = heatZoneTileList;
+                map.otherTileList = otherTileList;
 
                 string json = JsonConvert.SerializeObject(map, Formatting.Indented);
                 File.WriteAllText(savePath, json);
@@ -636,7 +634,6 @@ namespace MapEditor
                 globalMap[x, y] = null;
                 return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
             }
-
 
             // Check if we are putting a player
             if (sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource && numberPlayerOnMap > 0)
@@ -848,6 +845,42 @@ namespace MapEditor
 
             if (openFilePopup.FileName != "")
                 mapAudioPath = openFilePopup.FileName;
+        }
+
+        // Set the properties of a tile after right cliking it
+        private void setTileProperties(object sender, MouseButtonEventArgs e)
+        {
+            Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
+
+            int x = 0, y = 0;
+            String[] coo = ClickedRectangle.Tag.ToString().Split('/');
+            if (coo != null && coo.Length != 0)
+            {
+                x = int.Parse(coo.First());
+                y = int.Parse(coo.Last());
+            }
+
+            TileProperties tileProperties = new TileProperties();
+            TilePropertiesWindow tilePropertiesWindow;
+
+            if (globalMap[x, y] != null)
+            {
+                if (globalMap[x, y].properties == null)
+                    tilePropertiesWindow = new TilePropertiesWindow(x, y, mapWidth, mapHeight, ClickedRectangle);
+                else
+                    tilePropertiesWindow = new TilePropertiesWindow(x, y, mapWidth, mapHeight, globalMap[x, y], ClickedRectangle);
+            }
+            else
+            {
+                globalMap[x, y] = new tile { coordx = x, coordy = y, collidable = false };
+                tilePropertiesWindow = new TilePropertiesWindow(x, y, mapWidth, mapHeight, ClickedRectangle);
+            }
+
+            tilePropertiesWindow.Owner = this;
+            tilePropertiesWindow.ShowDialog();
+
+            if (tilePropertiesWindow.set == true)
+                globalMap[x, y].properties = tilePropertiesWindow.tileProperties;
         }
     }
 }

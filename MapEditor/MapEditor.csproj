@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9209395B-9281-4ED5-9E11-1253AAA066BF}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MapEditor</RootNamespace>
     <AssemblyName>MapEditor</AssemblyName>
@@ -66,6 +66,11 @@
     <Compile Include="SavePopup.xaml.cs">
       <DependentUpon>SavePopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tile.cs" />
+    <Compile Include="TileProperties.cs" />
+    <Compile Include="TilePropertiesWindow.xaml.cs">
+      <DependentUpon>TilePropertiesWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="GenericErrorPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -101,6 +106,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SavePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TilePropertiesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

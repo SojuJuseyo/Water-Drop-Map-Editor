@@ -20,6 +20,9 @@ namespace MapEditor
     /// </summary>
     public partial class TilePropertiesWindow : Window
     {
+        public List<String> orientationSources = new List<string>(new string[] { "RIGHT", "LEFT" });
+        public ORIENTATION tileOrientation { get; set; }
+
         public TileProperties tileProperties = new TileProperties();
 
         private int maxWidth { get; set; }
@@ -41,6 +44,7 @@ namespace MapEditor
             y1TextBox.Text = y.ToString();
             x2TextBox.Text = x.ToString();
             y2TextBox.Text = y.ToString();
+            sizeTextBox.Text = "1";
 
             spritePreview.Fill = clickedRectangle.Fill;
             spritePreview.Stroke = clickedRectangle.Stroke;
@@ -48,6 +52,9 @@ namespace MapEditor
 
             maxWidth = mapWidth;
             maxHeight = mapHeight;
+
+            orientationSelect.ItemsSource = orientationSources;
+            orientationSelect.SelectedIndex = 0;
 
             set = false;
         }
@@ -63,6 +70,7 @@ namespace MapEditor
             y1TextBox.Text = y.ToString();
             x2TextBox.Text = clickedTile.properties.x2.ToString();
             y2TextBox.Text = clickedTile.properties.y2.ToString();
+            sizeTextBox.Text = clickedTile.properties.size.ToString();
 
             spritePreview.Fill = clickedRectangle.Fill;
             spritePreview.Stroke = clickedRectangle.Stroke;
@@ -70,6 +78,9 @@ namespace MapEditor
 
             maxWidth = mapWidth;
             maxHeight = mapHeight;
+
+            orientationSelect.ItemsSource = orientationSources;
+            orientationSelect.SelectedIndex = (int)clickedTile.properties.orientation;
 
             set = false;
         }
@@ -82,6 +93,7 @@ namespace MapEditor
             tileProperties.y2 = -1;
 
             tileProperties.text = textTextBox.Text;
+            tileProperties.orientation = (ORIENTATION)orientationSelect.SelectedIndex;
 
             if (!string.IsNullOrEmpty(x2TextBox.Text) && x2TextBox.Text.All(char.IsDigit))
             {
@@ -113,7 +125,22 @@ namespace MapEditor
             else
                 y2TextBox.BorderBrush = new SolidColorBrush(Colors.Red);
 
-            if (tileProperties.x2 != -1 && tileProperties.y2 != -1)
+            if (!string.IsNullOrEmpty(sizeTextBox.Text) && sizeTextBox.Text.All(char.IsDigit))
+            {
+                tileProperties.size = int.Parse(sizeTextBox.Text);
+                if (tileProperties.size < 0)
+                {
+                    sizeTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
+                    tileProperties.size = -1;
+                }
+                else
+                    sizeTextBox.BorderBrush = new SolidColorBrush(Colors.DarkGreen);
+
+            }
+            else
+                sizeTextBox.BorderBrush = new SolidColorBrush(Colors.Red);
+
+            if (tileProperties.x2 != -1 && tileProperties.y2 != -1 && tileProperties.size != -1)
                 this.Close();
         }
 

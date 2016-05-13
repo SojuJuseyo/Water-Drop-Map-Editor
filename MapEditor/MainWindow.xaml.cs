@@ -42,6 +42,7 @@ namespace MapEditor
         public int mapHeight { get; set; }
         public string mapName { get; set; }
         public string mapAudioPath { get; set; }
+        public string mapBackgroundPath { get; set; }
 
         public enum SpecialTile
         {
@@ -72,6 +73,7 @@ namespace MapEditor
             public string name { get; set; }
             public string size { get; set; }
             public string audio { get; set; }
+            public string background { get; set; }
             public Dictionary<int, List<tile>> tileList { get; set; }
             public List<tile> heatZonesList { get; set; }
             public List<tile> otherTileList { get; set; }
@@ -135,6 +137,7 @@ namespace MapEditor
                 gridSplitter.Visibility = Visibility.Visible;
                 selectedSpriteLabel.Visibility = Visibility.Visible;
                 audioButton.Visibility = Visibility.Visible;
+                backgroundButton.Visibility = Visibility.Visible;
                 saveButton.IsEnabled = true;
                 lastSavePath = null;
                 hasBeenModified = false;
@@ -193,6 +196,7 @@ namespace MapEditor
                     newMapHeight = int.Parse(size.Last());
                     newMapName = loadedMap.name;
                     mapAudioPath = loadedMap.audio;
+                    mapBackgroundPath = loadedMap.background;
 
                     newGlobalMap = new tile[newMapWidth, newMapHeight];
 
@@ -257,6 +261,7 @@ namespace MapEditor
                 {
                     GenericErrorPopup errorPopup = new GenericErrorPopup();
 
+                    tileSelectionPanel.Children.Clear();
                     errorPopup.setErrorMessage("Error opening a map", "The map you're trying to open is corrupted.");
                     errorPopup.Owner = this;
                     errorPopup.ShowDialog();
@@ -328,6 +333,7 @@ namespace MapEditor
                 gridSplitter.Visibility = Visibility.Visible;
                 selectedSpriteLabel.Visibility = Visibility.Visible;
                 audioButton.Visibility = Visibility.Visible;
+                backgroundButton.Visibility = Visibility.Visible;
                 saveButton.IsEnabled = true;
                 lastSavePath = openFilePopup.FileName;
                 hasBeenModified = false;
@@ -450,6 +456,7 @@ namespace MapEditor
                 map.name = mapName;
                 map.size = mapWidth + "/" + mapHeight;
                 map.audio = mapAudioPath;
+                map.background = mapBackgroundPath;
                 map.tileList = sortedTileList;
                 map.heatZonesList = heatZoneTileList;
                 map.otherTileList = otherTileList;
@@ -863,6 +870,20 @@ namespace MapEditor
 
             if (openFilePopup.FileName != "")
                 mapAudioPath = openFilePopup.FileName;
+        }
+
+        // Click on the background button
+        private void backgroundButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog openFilePopup = new System.Windows.Forms.OpenFileDialog();
+
+            openFilePopup.DefaultExt = ".dds";
+            openFilePopup.Filter = "Image Files | *.dds";
+            openFilePopup.Title = "Open a background image";
+            openFilePopup.ShowDialog();
+
+            if (openFilePopup.FileName != "")
+                mapBackgroundPath = openFilePopup.FileName;
         }
 
         // Set the properties of a tile after right cliking it

@@ -20,6 +20,9 @@
         <GridSplitter x:Name="gridSplitter" HorizontalAlignment="Left" Margin="420,27,0,0" VerticalAlignment="Top" Width="2" Background="#FFCCCCCC" MinHeight="554" Height="{Binding ActualHeight, ElementName=ScrollViewer}" Visibility="Hidden"  Focusable="False" IsEnabled="False"/>
         <Label x:Name="selectedSpriteLabel" Content="Currently selected :" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Height="35" Width="124" FontSize="14" FontStyle="Italic" VerticalContentAlignment="Center" Visibility="Hidden"/>
         <Rectangle x:Name="selectedSprite" Fill="White" HorizontalAlignment="Left" Height="35" Margin="138,37,0,0" Stroke="#FFA6A4A4" VerticalAlignment="Top" Width="35" StrokeThickness="0"/>
+        <Button x:Name="backgroundButton" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="335,37,0,0" Visibility="Hidden" Click="backgroundButton_Click" Width="35" Height="35">
+            <Image Source="/Resources/backgroundIcon.png" />
+        </Button>
         <Button x:Name="audioButton" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="375,37,0,0" Visibility="Hidden" Click="audioButton_Click" Width="35" Height="35">
             <Image Source="/Resources/audioIcon.png" />
         </Button>

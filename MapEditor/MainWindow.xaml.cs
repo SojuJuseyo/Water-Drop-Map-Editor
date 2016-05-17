@@ -317,7 +317,8 @@ namespace MapEditor
                             if (globalMap[currentX, currentY].heatZone == true)
                                 rectangleChild = setGivenSpecialTile(rectangleChild, currentX, currentY, SpecialTile.HEATZONE);
                             if (globalMap[currentX, currentY].properties != null)
-                                rectangleChild.Opacity = 0.5;
+                                if (globalMap[currentX, currentY].properties.isScriptedOrTexted(currentX, currentY) == true)
+                                    rectangleChild.Opacity = 0.5;
                         }
                     }
                 }
@@ -937,6 +938,7 @@ namespace MapEditor
             else
             {
                 globalMap[x, y] = new tile { coordx = x, coordy = y, collidable = false };
+                setGivenSpecialTile(ClickedRectangle, x, y, SpecialTile.NON_COLLIDABLE);
                 tilePropertiesWindow = new TilePropertiesWindow(x, y, mapWidth, mapHeight, ClickedRectangle);
             }
 
@@ -952,7 +954,8 @@ namespace MapEditor
             if (tilePropertiesWindow.set == true)
             {
                 globalMap[x, y].properties = tilePropertiesWindow.tileProperties;
-                ClickedRectangle.Opacity = 0.5;
+                if (globalMap[x, y].properties.isScriptedOrTexted(x, y) == true)
+                    ClickedRectangle.Opacity = 0.5;
             }
         }
     }

@@ -20,7 +20,7 @@ namespace MapEditor
     /// </summary>
     public partial class TilePropertiesWindow : Window
     {
-        public string defaultSize = "40";
+        public string defaultSize = "48";
 
         public List<String> orientationSources = new List<string>(new string[] { "RIGHT", "LEFT" });
         public ORIENTATION tileOrientation { get; set; }

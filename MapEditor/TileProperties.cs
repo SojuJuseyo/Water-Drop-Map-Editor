@@ -24,5 +24,12 @@ namespace MapEditor
         {
             size = 40;
         }
+
+        public TileProperties(int x, int y)
+        {
+            x2 = x;
+            y2 = y;
+            size = 40;
+        }
     }
 }

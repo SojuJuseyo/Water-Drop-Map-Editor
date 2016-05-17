@@ -671,7 +671,7 @@ namespace MapEditor
                 return (globalMap[x, y].tileSprite);
             }
             if (sprite.ImageSource == listSprites[defaultEnemySpritePosition].ImageSource)
-                globalMap[x, y].properties = new TileProperties();
+                globalMap[x, y].properties = new TileProperties(x, y);
             /*else if (sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource)
                 selectedSprite.IsEnabled = false;*/
             //numberPlayerOnMap++;

@@ -19,5 +19,10 @@ namespace MapEditor
         public int y2 { get; set; }
         public int size { get; set; }
         public ORIENTATION orientation { get; set; }
+
+        public TileProperties()
+        {
+            size = 40;
+        }
     }
 }

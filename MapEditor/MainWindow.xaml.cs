@@ -23,6 +23,7 @@ namespace MapEditor
 
         // Default position of the player on the spritesheet
         public const int defaultPlayerSpritePosition = 5;
+        public const int defaultEnemySpritePosition = 3;
         public int numberPlayerOnMap { get; set; }
 
         // Cancel the exit of the map editor if you click on the red cross of the popup window
@@ -669,13 +670,16 @@ namespace MapEditor
                     return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
                 return (globalMap[x, y].tileSprite);
             }
-            else if (sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource)
-                selectedSprite.IsEnabled = false;
+            if (sprite.ImageSource == listSprites[defaultEnemySpritePosition].ImageSource)
+                globalMap[x, y].properties = new TileProperties();
+            /*else if (sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource)
+                selectedSprite.IsEnabled = false;*/
             //numberPlayerOnMap++;
 
             if (globalMap[x, y].tileSprite == listSprites[defaultPlayerSpritePosition])
                 if (sprite.ImageSource != listSprites[defaultPlayerSpritePosition].ImageSource)
                     numberPlayerOnMap--;
+
 
             globalMap[x, y].tileSprite = sprite;
             return (sprite);

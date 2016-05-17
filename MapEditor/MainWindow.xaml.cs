@@ -48,7 +48,8 @@ namespace MapEditor
         {
             NONE,
             HEATZONE,
-            NON_COLLIDABLE
+            NON_COLLIDABLE,
+            CLEAR
         }
 
         public Brush specialTile { get; set; }
@@ -124,7 +125,7 @@ namespace MapEditor
 
                     for (int i = 0; i < mapWidth; i++)
                     {
-                        panel.Children.Add(new Rectangle { Tag = i + "/" + (mapHeight - j - 1), Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFF4F4F5"), Stroke = new SolidColorBrush(Colors.Black), Margin = new Thickness(0, 2, 2, 0) });
+                        panel.Children.Add(new Rectangle { Tag = i + "/" + (mapHeight - j - 1), Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString(defaultColor), Stroke = new SolidColorBrush(Colors.Black), Margin = new Thickness(0, 2, 2, 0) });
                     }
                     mapGrid.Children.Add(panel);
                 }
@@ -288,7 +289,7 @@ namespace MapEditor
                     WrapPanel panel = new WrapPanel();
                     for (int i = 0; i < mapWidth; i++)
                     {
-                        panel.Children.Add(new Rectangle { Tag = i + "/" + (mapHeight - 1 - j), Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFF4F4F5"), Stroke = new SolidColorBrush(Colors.Black), Margin = new Thickness(0, 2, 2, 0) });
+                        panel.Children.Add(new Rectangle { Tag = i + "/" + (mapHeight - 1 - j), Width = tileSize, Height = tileSize, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString(defaultColor), Stroke = new SolidColorBrush(Colors.Black), Margin = new Thickness(0, 2, 2, 0) });
                     }
                     mapGrid.Children.Add(panel);
                 }
@@ -520,18 +521,25 @@ namespace MapEditor
             WrapPanel panel = new WrapPanel();
 
             Label heatZoneLabel = new Label { Content = "Heat Zone :", FontSize = 15, Height = 48, VerticalContentAlignment = VerticalAlignment.Center };
-            Rectangle heatZoneRectangle = new Rectangle { Width = 48, Height = 48, StrokeThickness = 2, Stroke = new SolidColorBrush(Colors.Orange), Fill = new SolidColorBrush(Colors.White), Margin = new Thickness(5, 5, 5, 5), Name = SpecialTile.HEATZONE.ToString() };
+            Rectangle heatZoneRectangle = new Rectangle { Width = 48, Height = 48, StrokeThickness = 2, Stroke = new SolidColorBrush(Colors.Orange), Fill = new SolidColorBrush(Colors.White), Margin = new Thickness(5, 5, 20, 5), Name = SpecialTile.HEATZONE.ToString() };
             heatZoneRectangle.MouseLeftButtonDown += specialTile_Click;
 
             Label nonCollidableBlockLabel = new Label { Content = "Non-Collidable Block :", FontSize = 15, Height = 48, VerticalContentAlignment = VerticalAlignment.Center };
-            Rectangle nonCollidableBlockRectangle = new Rectangle { Width = 48, Height = 48, StrokeThickness = 2, Stroke = new SolidColorBrush(Colors.DarkGray), Fill = new SolidColorBrush(Colors.White), Margin = new Thickness(5, 5, 5, 5), Name = SpecialTile.NON_COLLIDABLE.ToString() };
+            Rectangle nonCollidableBlockRectangle = new Rectangle { Width = 48, Height = 48, StrokeThickness = 2, Stroke = new SolidColorBrush(Colors.DarkGray), Fill = new SolidColorBrush(Colors.White), Margin = new Thickness(5, 5, 20, 5), Name = SpecialTile.NON_COLLIDABLE.ToString() };
             nonCollidableBlockRectangle.MouseLeftButtonDown += specialTile_Click;
+
+            Label clearLabel = new Label { Content = "Clear :", FontSize = 15, Height = 48, VerticalContentAlignment = VerticalAlignment.Center };
+            Rectangle clearRectangle = new Rectangle { Width = 48, Height = 48, Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString(defaultColor), Stroke = new SolidColorBrush(Colors.Black), Margin = new Thickness(5, 5, 20, 5), Name = SpecialTile.CLEAR.ToString() };
+            clearRectangle.MouseLeftButtonDown += specialTile_Click;
 
             panel.Children.Add(heatZoneLabel);
             panel.Children.Add(heatZoneRectangle);
 
             panel.Children.Add(nonCollidableBlockLabel);
             panel.Children.Add(nonCollidableBlockRectangle);
+
+            panel.Children.Add(clearLabel);
+            panel.Children.Add(clearRectangle);
 
             tileSelectionPanel.Children.Add(panel);
         }
@@ -713,6 +721,15 @@ namespace MapEditor
                 }
             }
 
+            if (specialTileType == SpecialTile.CLEAR)
+            {
+                globalMap[x, y] = null;
+                rectangle.Stroke = new SolidColorBrush(Colors.Black);
+                rectangle.StrokeThickness = 1;
+                rectangle.Fill = (Brush)new System.Windows.Media.BrushConverter().ConvertFromString(defaultColor);
+                rectangle.Opacity = 1;
+            }
+
             return (rectangle);
         }
 
@@ -765,6 +782,11 @@ namespace MapEditor
             if (ClickedTile.Name == SpecialTile.NON_COLLIDABLE.ToString())
             {
                 specialTileType = SpecialTile.NON_COLLIDABLE;
+            }
+
+            if (ClickedTile.Name == SpecialTile.CLEAR.ToString())
+            {
+                specialTileType = SpecialTile.CLEAR;
             }
 
             specialTile = ClickedTile.Fill;

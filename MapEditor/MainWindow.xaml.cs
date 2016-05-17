@@ -867,7 +867,7 @@ namespace MapEditor
             openFilePopup.ShowDialog();
 
             if (openFilePopup.FileName != "")
-                mapAudioPath = openFilePopup.FileName;
+                mapAudioPath = openFilePopup.FileName.Split('\\').Last();
         }
 
         // Click on the background button
@@ -881,7 +881,7 @@ namespace MapEditor
             openFilePopup.ShowDialog();
 
             if (openFilePopup.FileName != "")
-                mapBackgroundPath = openFilePopup.FileName;
+                mapBackgroundPath = openFilePopup.FileName.Split('\\').Last();
         }
 
         // Set the properties of a tile after right cliking it

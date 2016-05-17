@@ -20,6 +20,8 @@ namespace MapEditor
     /// </summary>
     public partial class TilePropertiesWindow : Window
     {
+        public string defaultSize = "40";
+
         public List<String> orientationSources = new List<string>(new string[] { "RIGHT", "LEFT" });
         public ORIENTATION tileOrientation { get; set; }
 
@@ -44,7 +46,7 @@ namespace MapEditor
             y1TextBox.Text = y.ToString();
             x2TextBox.Text = x.ToString();
             y2TextBox.Text = y.ToString();
-            sizeTextBox.Text = "1";
+            sizeTextBox.Text = defaultSize;
 
             spritePreview.Fill = clickedRectangle.Fill;
             spritePreview.Stroke = clickedRectangle.Stroke;

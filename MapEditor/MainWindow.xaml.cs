@@ -593,7 +593,7 @@ namespace MapEditor
                     if (specialTile != null)
                         ClickedRectangle = setSpecialTile(ClickedRectangle,secondTileX, secondTileY);
                     else
-                        ClickedRectangle.Fill = setRectangleSprite(secondTileX, secondTileY);
+                        ClickedRectangle.Fill = setRectangleSprite(secondTileX, secondTileY, ClickedRectangle);
                 }
                 else
                 {
@@ -636,7 +636,7 @@ namespace MapEditor
                                     if (specialTile != null)
                                         rectangleChild = setSpecialTile(rectangleChild, currentX, currentY);
                                     else
-                                        rectangleChild.Fill = setRectangleSprite(currentX, currentY);
+                                        rectangleChild.Fill = setRectangleSprite(currentX, currentY, rectangleChild);
                                 }
                             }
                         }
@@ -650,7 +650,7 @@ namespace MapEditor
         }
 
         // Define the tile's sprite
-        private Brush setRectangleSprite(int x, int y)
+        private Brush setRectangleSprite(int x, int y, Rectangle ClickedRectangle)
         {
             // If the tile we click on == the one we selected we need to unset it
             if (globalMap[x, y].tileSprite == sprite || globalMap[x, y].tileSprite == usedSprites[spriteInt])
@@ -660,6 +660,7 @@ namespace MapEditor
                     numberPlayerOnMap--;
 
                 globalMap[x, y] = null;
+                ClickedRectangle.Opacity = 1;
                 return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
             }
 

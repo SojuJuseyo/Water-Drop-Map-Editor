@@ -916,6 +916,12 @@ namespace MapEditor
             tilePropertiesWindow.Owner = this;
             tilePropertiesWindow.ShowDialog();
 
+            if (tilePropertiesWindow.delete == true)
+            {
+                globalMap[x, y].properties = null;
+                ClickedRectangle.Opacity = 1;
+            }
+
             if (tilePropertiesWindow.set == true)
             {
                 globalMap[x, y].properties = tilePropertiesWindow.tileProperties;

@@ -31,6 +31,7 @@ namespace MapEditor
         private int maxHeight { get; set; }
 
         public bool set { get; set; }
+        public bool delete { get; set; }
 
         public TilePropertiesWindow()
         {
@@ -59,6 +60,7 @@ namespace MapEditor
             orientationSelect.SelectedIndex = 0;
 
             set = false;
+            delete = false;
         }
 
         // If the tile already has properties
@@ -85,12 +87,14 @@ namespace MapEditor
             orientationSelect.SelectedIndex = (int)clickedTile.properties.orientation;
 
             set = false;
+            delete = false;
         }
 
         // After validation
         private void validateButton_Click(object sender, RoutedEventArgs e)
         {
             set = true;
+            delete = false;
             tileProperties.x2 = -1;
             tileProperties.y2 = -1;
 
@@ -157,6 +161,12 @@ namespace MapEditor
         {
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void deleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            delete = true;
+            this.Close();
         }
     }
 }

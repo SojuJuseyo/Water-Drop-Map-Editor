@@ -20,6 +20,7 @@ namespace MapEditor
     {
         public const string defaultColor = "#FFF4F4F5";
         public string defaultSpriteSheetFile = "../spritesheet.png";
+        public string playerSpriteSheetFile = "../player.png";
 
         // Default position of the player on the spritesheet
         public const int defaultPlayerSpritePosition = 5;
@@ -473,14 +474,16 @@ namespace MapEditor
         // Load the buttons from a txt file
         private void loadButtonsFromFile()
         {
+            tileSelectionPanel.Children.Clear();
+            listSprites.Clear();
+            int i = 0;
+
             if (File.Exists(defaultSpriteSheetFile))
             {
                 WrapPanel panel = new WrapPanel();
                 BitmapImage spriteSheet = new BitmapImage(new Uri(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, defaultSpriteSheetFile)));
 
-                listSprites.Clear();
-
-                for (int i = 0; i * 16 < spriteSheet.Width; i++)
+                for (i = 0; i * 16 < spriteSheet.Width; i++)
                 {
                     CroppedBitmap singleSprite = new CroppedBitmap(spriteSheet, new Int32Rect(i * 16, 0, 16, 16));
 
@@ -511,6 +514,46 @@ namespace MapEditor
                 if (!string.IsNullOrEmpty(popup.fileName))
                 {
                     defaultSpriteSheetFile = popup.fileName;
+                    this.loadButtonsFromFile();
+                }
+            }
+
+            if (File.Exists(playerSpriteSheetFile))
+            {
+                WrapPanel panel = new WrapPanel();
+                BitmapImage playerSpriteSheet = new BitmapImage(new Uri(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, playerSpriteSheetFile)));
+
+                for (int j = 0; j * 16 < playerSpriteSheet.Width; j++)
+                {
+                    CroppedBitmap singleSprite = new CroppedBitmap(playerSpriteSheet, new Int32Rect(j * 16, 0, 16, 16));
+
+                    Rectangle spriteRectangle = new Rectangle { Width = 48, Height = 48, Stroke = new SolidColorBrush(Colors.Black), Margin = new Thickness(5, 5, 5, 5) };
+                    spriteRectangle.Fill = new ImageBrush(singleSprite);
+                    spriteRectangle.MouseLeftButtonDown += spriteButton_Click;
+                    spriteRectangle.Tag = i + j;
+
+                    listSprites.Add(new ImageBrush(singleSprite));
+
+                    if (!usedSprites.ContainsKey(i + j))
+                        usedSprites.Add(i + j, new ImageBrush(singleSprite));
+
+                    panel.Children.Add(spriteRectangle);
+                }
+
+                tileSelectionPanel.Children.Add(panel);
+            }
+            else
+            {
+                NoConfigFilePopup popup = new NoConfigFilePopup();
+                string[] configFilePath = playerSpriteSheetFile.Split('/');
+
+                popup.setContent(configFilePath.Last());
+                popup.Owner = this;
+                popup.ShowDialog();
+
+                if (!string.IsNullOrEmpty(popup.fileName))
+                {
+                    playerSpriteSheetFile = popup.fileName;
                     this.loadButtonsFromFile();
                 }
             }

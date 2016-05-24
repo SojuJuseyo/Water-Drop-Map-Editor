@@ -22,14 +22,14 @@ namespace MapEditor
 
         public TileProperties()
         {
-            size = 4;
+            size = 6;
         }
 
         public TileProperties(int x, int y)
         {
             x2 = x;
             y2 = y;
-            size = 4;
+            size = 6;
         }
 
         // Determine if the properties contain text or a scripting action

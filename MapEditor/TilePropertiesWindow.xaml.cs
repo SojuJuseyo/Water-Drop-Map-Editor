@@ -20,7 +20,7 @@ namespace MapEditor
     /// </summary>
     public partial class TilePropertiesWindow : Window
     {
-        public string defaultSize = "48";
+        public string defaultSize = "4";
 
         public List<String> orientationSources = new List<string>(new string[] { "RIGHT", "LEFT" });
         public ORIENTATION tileOrientation { get; set; }
@@ -163,6 +163,7 @@ namespace MapEditor
             e.Handled = regex.IsMatch(e.Text);
         }
 
+        // Delete the properties of the current tile
         private void deleteButton_Click(object sender, RoutedEventArgs e)
         {
             delete = true;

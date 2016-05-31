@@ -8,12 +8,20 @@ using System.Windows.Media;
 
 namespace MapEditor
 {
+    public enum SpriteType
+    {
+        BLOCK,
+        PLAYER
+    }
+
     public class tile
     {
         [JsonIgnore]
         public ImageBrush tileSprite { get; set; }
         [JsonIgnore]
         public bool heatZone { get; set; }
+        [JsonIgnore]
+        public SpriteType spriteType { get; set; }
 
         public bool collidable { get; set; }
         public int coordx { get; set; }

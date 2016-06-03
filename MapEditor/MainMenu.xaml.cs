@@ -36,21 +36,21 @@ namespace MapEditor
             InitializeComponent();
         }
 
-        private void createMapButton_Click(object sender, RoutedEventArgs e)
+        private void createMapButton_Click(object sender, MouseButtonEventArgs e)
         {
             isClosing = true;
             action = Action.CREATE;
             this.Close();
         }
 
-        private void openMapButton_Click(object sender, RoutedEventArgs e)
+        private void openMapButton_Click(object sender, MouseButtonEventArgs e)
         {
             isClosing = true;
             action = Action.OPEN;
             this.Close();
         }
 
-        private void exitButton_Click(object sender, RoutedEventArgs e)
+        private void exitButton_Click(object sender, MouseButtonEventArgs e)
         {
             isClosing = true;
             action = Action.EXIT;

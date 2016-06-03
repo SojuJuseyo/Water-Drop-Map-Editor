@@ -22,13 +22,16 @@ namespace MapEditor
 
         public string defaultSpriteSheetFile = "../spritesheet.png";
         public string playerSpriteSheetFile = "../player.png";
+        public string enemySpriteSheetFile = "../enemy.png";
 
         public int defaultSpriteSheetSize { get; set; }
         public int playerSpriteSheetSize { get; set; }
+        public int enemySpriteSheetSize { get; set; }
 
-        // Default position of the player on the spritesheet
-        public const int defaultPlayerSpritePosition = 5;
-        public const int defaultEnemySpritePosition = 3;
+        // Default position of the player on the spritesheet TO DELETE
+        /*public const int defaultPlayerSpritePosition = 5;
+        public const int defaultEnemySpritePosition = 3;*/
+
         public int numberPlayerOnMap { get; set; }
 
         // Cancel the exit of the map editor if you click on the red cross of the popup window
@@ -68,6 +71,7 @@ namespace MapEditor
         public List<ImageBrush> listSprites = new List<ImageBrush>();
         public Dictionary<int, ImageBrush> usedBlockSprites = new Dictionary<int, ImageBrush>();
         public Dictionary<int, ImageBrush> usedPlayerSprites = new Dictionary<int, ImageBrush>();
+        public Dictionary<int, ImageBrush> usedEnemySprites = new Dictionary<int, ImageBrush>();
 
         // Those variables are the coordinate of the rectangle on a MouseDown event
         public int firstTileX { get; set; }
@@ -84,6 +88,7 @@ namespace MapEditor
             public string background { get; set; }
             public Dictionary<int, List<tile>> blockTileList { get; set; }
             public Dictionary<int, List<tile>> playerTileList { get; set; }
+            public Dictionary<int, List<tile>> enemyTileList { get; set; }
             public List<tile> heatZonesList { get; set; }
             public List<tile> otherTileList { get; set; }
         }
@@ -112,8 +117,6 @@ namespace MapEditor
 
             if (createNewMapWindow.xSize > 0 && createNewMapWindow.ySize > 0)
             {
-                informations.Visibility = Visibility.Hidden;
-
                 // After the popup is closed
                 mapWidth = createNewMapWindow.xSize;
                 mapHeight = createNewMapWindow.ySize;
@@ -180,6 +183,7 @@ namespace MapEditor
 
             usedBlockSprites.Clear();
             usedPlayerSprites.Clear();
+            usedEnemySprites.Clear();
 
             System.Windows.Forms.OpenFileDialog openFilePopup = new System.Windows.Forms.OpenFileDialog();
             int newMapWidth, newMapHeight, tileSize = 0;
@@ -207,6 +211,10 @@ namespace MapEditor
                     newMapName = loadedMap.name;
                     mapAudioPath = loadedMap.audio;
                     mapBackgroundPath = loadedMap.background;
+
+                    defaultSpriteSheetSize = 0;
+                    playerSpriteSheetSize = 0;
+                    enemySpriteSheetSize = 0;
 
                     newGlobalMap = new tile[newMapWidth, newMapHeight];
 
@@ -265,6 +273,30 @@ namespace MapEditor
                         }
                     }
 
+                    foreach (var list in loadedMap.enemyTileList)
+                    {
+                        var tileIndex = list.Key;
+                        var tileList = list.Value;
+
+                        foreach (tile elem in tileList)
+                        {
+                            tile newTile = new tile();
+                            newTile.coordx = elem.coordx;
+                            newTile.coordy = elem.coordy;
+                            newTile.tileSprite = listSprites[tileIndex + defaultSpriteSheetSize + playerSpriteSheetSize];
+                            newTile.collidable = elem.collidable;
+                            newTile.properties = elem.properties;
+                            newTile.spriteType = SpriteType.ENEMY;
+
+                            if (!usedEnemySprites.ContainsKey(tileIndex))
+                                usedEnemySprites.Add(tileIndex, listSprites[tileIndex + defaultSpriteSheetSize + playerSpriteSheetSize]);
+                            else if (usedEnemySprites[tileIndex] != listSprites[tileIndex + defaultSpriteSheetSize + playerSpriteSheetSize])
+                                usedEnemySprites[tileIndex] = listSprites[tileIndex + defaultSpriteSheetSize + playerSpriteSheetSize];
+
+                            newGlobalMap[elem.coordx, elem.coordy] = newTile;
+                        }
+                    }
+
                     foreach (tile heatZone in loadedMap.heatZonesList)
                     {
                         if (newGlobalMap[heatZone.coordx, heatZone.coordy] != null)
@@ -294,8 +326,9 @@ namespace MapEditor
                     }
 
                 }
-                catch (Exception)
+                catch (Exception ee)
                 {
+                    Console.WriteLine(ee.ToString());
                     GenericErrorPopup errorPopup = new GenericErrorPopup();
 
                     tileSelectionPanel.Children.Clear();
@@ -358,14 +391,12 @@ namespace MapEditor
                     }
                 }
 
-                // Hide the message displayed at the opening of the map editor
-                informations.Visibility = Visibility.Hidden;
-
                 // Clear existing buttons
                 tileSelectionPanel.Children.Clear();
 
                 defaultSpriteSheetSize = 0;
                 playerSpriteSheetSize = 0;
+                enemySpriteSheetSize = 0;
 
                 loadButtonsFromFile();
                 loadSpecialTiles();
@@ -421,6 +452,7 @@ namespace MapEditor
 
                 Dictionary<int, List<tile>> sortedBlockTileList = new Dictionary<int, List<tile>>();
                 Dictionary<int, List<tile>> sortedPlayerTileList = new Dictionary<int, List<tile>>();
+                Dictionary<int, List<tile>> sortedEnemyTileList = new Dictionary<int, List<tile>>();
 
                 List<tile> heatZoneTileList = new List<tile>();
                 List<tile> otherTileList = new List<tile>();
@@ -450,6 +482,7 @@ namespace MapEditor
                 {
                     List<tile> blockTileList = new List<tile>();
                     List<tile> playerTileList = new List<tile>();
+                    List<tile> enemyTileList = new List<tile>();
 
                     for (int j = 0; j < mapHeight; j++)
                     {
@@ -462,21 +495,11 @@ namespace MapEditor
                                     if (globalMap[i, j].tileSprite.ImageSource == listSprites[k].ImageSource)
                                     {
                                         if (globalMap[i, j].spriteType == SpriteType.BLOCK)
-                                            blockTileList.Add(new tile()
-                                            {
-                                                coordx = i,
-                                                coordy = j,
-                                                collidable = globalMap[i, j].collidable,
-                                                properties = globalMap[i, j].properties
-                                            });
+                                            blockTileList.Add(new tile() { coordx = i, coordy = j, collidable = globalMap[i, j].collidable, properties = globalMap[i, j].properties });
                                         else if (globalMap[i, j].spriteType == SpriteType.PLAYER)
-                                            playerTileList.Add(new tile()
-                                            {
-                                                coordx = i,
-                                                coordy = j,
-                                                collidable = globalMap[i, j].collidable,
-                                                properties = globalMap[i, j].properties
-                                            });
+                                            playerTileList.Add(new tile() { coordx = i, coordy = j, collidable = globalMap[i, j].collidable, properties = globalMap[i, j].properties });
+                                        else if (globalMap[i, j].spriteType == SpriteType.ENEMY)
+                                            enemyTileList.Add(new tile() { coordx = i, coordy = j, collidable = globalMap[i, j].collidable, properties = globalMap[i, j].properties });
                                     }
                                     else
                                     {
@@ -485,21 +508,11 @@ namespace MapEditor
                                             if (globalMap[i, j].tileSprite == usedBlockSprites[k])
                                             {
                                                 if (globalMap[i, j].spriteType == SpriteType.BLOCK)
-                                                    blockTileList.Add(new tile()
-                                                    {
-                                                        coordx = i,
-                                                        coordy = j,
-                                                        collidable = globalMap[i, j].collidable,
-                                                        properties = globalMap[i, j].properties
-                                                    });
+                                                    blockTileList.Add(new tile() { coordx = i, coordy = j, collidable = globalMap[i, j].collidable, properties = globalMap[i, j].properties });
                                                 else if (globalMap[i, j].spriteType == SpriteType.PLAYER)
-                                                    playerTileList.Add(new tile()
-                                                    {
-                                                        coordx = i,
-                                                        coordy = j,
-                                                        collidable = globalMap[i, j].collidable,
-                                                        properties = globalMap[i, j].properties
-                                                    });
+                                                    playerTileList.Add(new tile() { coordx = i, coordy = j, collidable = globalMap[i, j].collidable, properties = globalMap[i, j].properties });
+                                                else if (globalMap[i, j].spriteType == SpriteType.ENEMY)
+                                                    enemyTileList.Add(new tile() { coordx = i, coordy = j, collidable = globalMap[i, j].collidable, properties = globalMap[i, j].properties });
                                             }
                                         }
                                     }
@@ -512,6 +525,8 @@ namespace MapEditor
                         sortedBlockTileList.Add(k, blockTileList);
                     if (playerTileList.Count != 0)
                         sortedPlayerTileList.Add(k - defaultSpriteSheetSize, playerTileList);
+                    if (enemyTileList.Count != 0)
+                        sortedEnemyTileList.Add(k - defaultSpriteSheetSize - playerSpriteSheetSize, enemyTileList);
                 }
 
                 MapInfos map = new MapInfos();
@@ -522,6 +537,7 @@ namespace MapEditor
                 map.background = mapBackgroundPath;
                 map.blockTileList = sortedBlockTileList;
                 map.playerTileList = sortedPlayerTileList;
+                map.enemyTileList = sortedEnemyTileList;
                 map.heatZonesList = heatZoneTileList;
                 map.otherTileList = otherTileList;
 
@@ -533,19 +549,18 @@ namespace MapEditor
             }
         }
 
-        // Load the buttons from a txt file
+        // Load the buttons from the spritesheets
         private void loadButtonsFromFile()
         {
             tileSelectionPanel.Children.Clear();
             listSprites.Clear();
-            int i = 0;
 
             if (File.Exists(defaultSpriteSheetFile))
             {
                 WrapPanel panel = new WrapPanel();
                 BitmapImage spriteSheet = new BitmapImage(new Uri(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, defaultSpriteSheetFile)));
 
-                for (i = 0; i * 16 < spriteSheet.Width; i++)
+                for (int i = 0; i * 16 < spriteSheet.Width; i++)
                 {
                     CroppedBitmap singleSprite = new CroppedBitmap(spriteSheet, new Int32Rect(i * 16, 0, 16, 16));
 
@@ -624,6 +639,47 @@ namespace MapEditor
                 }
             }
 
+            if (File.Exists(enemySpriteSheetFile))
+            {
+                WrapPanel panel = new WrapPanel();
+                BitmapImage enemySpriteSheet = new BitmapImage(new Uri(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, enemySpriteSheetFile)));
+
+                for (int k = 0; k * 36 < enemySpriteSheet.Width; k++)
+                {
+                    CroppedBitmap singleSprite = new CroppedBitmap(enemySpriteSheet, new Int32Rect(k * 36, 0, 36, 42));
+
+                    Rectangle spriteRectangle = new Rectangle { Width = 48, Height = 48, Stroke = new SolidColorBrush(Colors.Black), Margin = new Thickness(5, 5, 5, 5) };
+                    spriteRectangle.Fill = new ImageBrush(singleSprite);
+                    spriteRectangle.MouseLeftButtonDown += spriteButton_Click;
+                    spriteRectangle.Tag = k;
+                    spriteRectangle.Name = "Enemy";
+
+                    listSprites.Add(new ImageBrush(singleSprite));
+                    enemySpriteSheetSize++;
+
+                    if (!usedEnemySprites.ContainsKey(k))
+                        usedEnemySprites.Add(k, new ImageBrush(singleSprite));
+
+                    panel.Children.Add(spriteRectangle);
+                }
+
+                tileSelectionPanel.Children.Add(panel);
+            }
+            else
+            {
+                NoConfigFilePopup popup = new NoConfigFilePopup();
+                string[] configFilePath = enemySpriteSheetFile.Split('/');
+
+                popup.setContent(configFilePath.Last());
+                popup.Owner = this;
+                popup.ShowDialog();
+
+                if (!string.IsNullOrEmpty(popup.fileName))
+                {
+                    enemySpriteSheetFile = popup.fileName;
+                    this.loadButtonsFromFile();
+                }
+            }
         }
 
         // Load special tiles like Heat zones
@@ -766,6 +822,10 @@ namespace MapEditor
             if (selectedSprite.Name == "Player")
                 return (setPlayerSprite(x, y, ClickedRectangle));
 
+            // If we are putting an enemy
+            if (selectedSprite.Name == "Enemy")
+                return (setEnemySprite(x, y, ClickedRectangle));
+
             // If the tile we click on == the one we selected then we need to unset it
             // Unset of a tile
             if (globalMap[x, y].tileSprite == sprite || globalMap[x, y].tileSprite == usedBlockSprites[spriteInt])
@@ -775,13 +835,12 @@ namespace MapEditor
                 return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
             }
 
-            // If enemy then create properties
-            if (sprite.ImageSource == listSprites[defaultEnemySpritePosition].ImageSource)
-                globalMap[x, y].properties = new TileProperties(x, y);
-
             // If we unset a player we reduce the number of player on the map by one
             if (globalMap[x, y].spriteType == SpriteType.PLAYER)
                     numberPlayerOnMap--;
+
+            if (globalMap[x, y].spriteType == SpriteType.ENEMY)
+                globalMap[x, y].properties = null;
 
             globalMap[x, y].tileSprite = sprite;
             globalMap[x, y].spriteType = SpriteType.BLOCK;
@@ -847,7 +906,7 @@ namespace MapEditor
             if (numberPlayerOnMap >= 1 && (globalMap[x, y].tileSprite != sprite || globalMap[x, y].tileSprite != usedPlayerSprites[spriteInt]))
             {
                 // If the clicked tile is a block tile
-                if (globalMap[x, y].spriteType == SpriteType.BLOCK || globalMap[x, y].tileSprite == null)
+                if (globalMap[x, y].spriteType == SpriteType.BLOCK || globalMap[x, y].spriteType == SpriteType.ENEMY || globalMap[x, y].tileSprite == null)
                 {
                     if (globalMap[x, y].tileSprite == null)
                         return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
@@ -873,6 +932,28 @@ namespace MapEditor
             if (globalMap[x, y].tileSprite == null)
                 return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
             return (globalMap[x, y].tileSprite);
+        }
+
+        // Function called in setRectangleSprite function when the selected sprite is from the enemy sprite sheet
+        private Brush setEnemySprite(int x, int y, Rectangle ClickedRectangle)
+        {
+            // If the tile we click on == the one we selected then we need to unset it
+            // Unset of a tile
+            if (globalMap[x, y].tileSprite == sprite || globalMap[x, y].tileSprite == usedEnemySprites[spriteInt])
+            {
+                globalMap[x, y] = null;
+                ClickedRectangle.Opacity = 1;
+                return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
+            }
+
+            // If we unset a player we reduce the number of player on the map by one
+            if (globalMap[x, y].spriteType == SpriteType.PLAYER)
+                numberPlayerOnMap--;
+
+            globalMap[x, y].properties = new TileProperties(x, y);
+            globalMap[x, y].tileSprite = sprite;
+            globalMap[x, y].spriteType = SpriteType.ENEMY;
+            return (sprite);
         }
 
         // Set the special tile to the rectangle
@@ -956,6 +1037,8 @@ namespace MapEditor
             spriteInt = (int)ClickedSprite.Tag;
             if (ClickedSprite.Name == "Player")
                 sprite = listSprites[spriteInt + defaultSpriteSheetSize];// Temp for the size or the first spritesheet
+            else if (ClickedSprite.Name == "Enemy")
+                sprite = listSprites[spriteInt + defaultSpriteSheetSize + playerSpriteSheetSize];
             else
                 sprite = listSprites[spriteInt];//(ImageBrush)ClickedSprite.Fill;
             selectedSprite.Name = ClickedSprite.Name;

@@ -11,7 +11,8 @@ namespace MapEditor
     public enum SpriteType
     {
         BLOCK,
-        PLAYER
+        PLAYER,
+        ENEMY
     }
 
     public class tile

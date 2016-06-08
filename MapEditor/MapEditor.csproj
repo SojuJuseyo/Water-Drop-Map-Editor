@@ -144,6 +144,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Resource Include="Resources\pixelart.ttf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -156,6 +157,13 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\backgroundIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\preview.png" />
+    <Resource Include="Resources\title.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\background.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -27,7 +27,6 @@
             <Image Source="/Resources/audioIcon.png" />
         </Button>
         <StackPanel x:Name="tileSelectionPanel" HorizontalAlignment="Left" Height="491" Margin="10,91,0,0" VerticalAlignment="Top" Width="425"/>
-        <Label x:Name="informations" Content="Welcome to the Water Drop Project Map Editor.&#xD;&#xA;&#xD;&#xA;As the editor isn't in its final version yet, feel free to give us feedback or to report any issues you could encounter at&#xD;&#xA;t.raballand@gmail.com&#xD;&#xA;&#xD;&#xA;- The Water Drop Project Team" HorizontalAlignment="Left" Margin="89,122,0,0" VerticalAlignment="Top" Height="172" Width="845" FontSize="16"/>
     </Grid>
 </Window>
     

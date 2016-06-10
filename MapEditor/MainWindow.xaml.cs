@@ -18,20 +18,20 @@ namespace MapEditor
     /// </summary>
     public partial class MainWindow : Window
     {
+        // Default tile color
         public const string defaultColor = "#FFF4F4F5";
 
+        // Default path of the spritesheets
         public string defaultSpriteSheetFile = "../spritesheet.png";
         public string playerSpriteSheetFile = "../player.png";
         public string enemySpriteSheetFile = "../enemy.png";
 
+        // Size of the spritesheets
         public int defaultSpriteSheetSize { get; set; }
         public int playerSpriteSheetSize { get; set; }
         public int enemySpriteSheetSize { get; set; }
 
-        // Default position of the player on the spritesheet TO DELETE
-        /*public const int defaultPlayerSpritePosition = 5;
-        public const int defaultEnemySpritePosition = 3;*/
-
+        // Keep track of the number of players on the map
         public int numberPlayerOnMap { get; set; }
 
         // Cancel the exit of the map editor if you click on the red cross of the popup window
@@ -53,6 +53,7 @@ namespace MapEditor
         public string mapAudioPath { get; set; }
         public string mapBackgroundPath { get; set; }
 
+        // Variables to handle special tiles such as heatzones
         public enum SpecialTile
         {
             NONE,
@@ -60,7 +61,6 @@ namespace MapEditor
             NON_COLLIDABLE,
             CLEAR
         }
-
         public Brush specialTile { get; set; }
         public SpecialTile specialTileType { get; set; }
 
@@ -327,9 +327,8 @@ namespace MapEditor
                     }
 
                 }
-                catch (Exception ee)
+                catch (Exception)
                 {
-                    Console.WriteLine(ee.ToString());
                     GenericErrorPopup errorPopup = new GenericErrorPopup();
 
                     tileSelectionPanel.Children.Clear();
@@ -366,8 +365,6 @@ namespace MapEditor
 
                 foreach (WrapPanel panelChild in mapGrid.Children)
                 {
-                    //foreach (Rectangle rectangleChild in panelChild.Children)
-                    //Old
                     for (int i = 0; i < panelChild.Children.Count; i++)
                     {
                         Rectangle rectangleChild = (Rectangle)panelChild.Children[i];
@@ -780,8 +777,6 @@ namespace MapEditor
 
                     foreach (WrapPanel panelChild in mapGrid.Children)
                     {
-                        //foreach (Rectangle rectangleChild in panelChild.Children)
-                        //Au dessus c'est old mais on garde au cas ou
                         for (int i = 0; i < panelChild.Children.Count; i++)
                         {
                             // Get the rectangle as we don't use a foreach anymore because of C#
@@ -846,46 +841,6 @@ namespace MapEditor
             globalMap[x, y].tileSprite = sprite;
             globalMap[x, y].spriteType = SpriteType.BLOCK;
             return (sprite);
-
-            /*
-            // BACKUP
-            
-            // If the tile we click on == the one we selected then we need to unset it
-            // Unset of a tile
-            if (globalMap[x, y].tileSprite == sprite || globalMap[x, y].tileSprite == usedBlockSprites[spriteInt])
-            {
-                // Check if the selected sprite is the one of a player -> unset and decrement
-                if (sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource)
-                    numberPlayerOnMap--;
-
-                globalMap[x, y] = null;
-                ClickedRectangle.Opacity = 1;
-                return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
-            }
-
-            // Check if we are putting a player and there is an existing player
-            if ((sprite.ImageSource == listSprites[defaultPlayerSpritePosition].ImageSource || selectedSprite.Name == "Player") && numberPlayerOnMap > 0)
-            {
-                if (globalMap[x, y].tileSprite == null)
-                    return ((SolidColorBrush)(new BrushConverter().ConvertFrom(defaultColor)));
-                return (globalMap[x, y].tileSprite);
-            }
-            // If enemy then create properties
-            if (sprite.ImageSource == listSprites[defaultEnemySpritePosition].ImageSource)
-                globalMap[x, y].properties = new TileProperties(x, y);
-
-            if (selectedSprite.Name == "Player")
-                numberPlayerOnMap++;
-
-            if (globalMap[x, y].tileSprite == listSprites[defaultPlayerSpritePosition])
-                if (sprite.ImageSource != listSprites[defaultPlayerSpritePosition].ImageSource)
-                    numberPlayerOnMap--;
-
-            globalMap[x, y].tileSprite = sprite;
-            globalMap[x, y].spriteType = SpriteType.BLOCK;
-            return (sprite);
-            
-            */
         }
 
         // Function called in setRectangleSprite function when the selected sprite is from the player sprite sheet
@@ -1039,11 +994,11 @@ namespace MapEditor
 
             spriteInt = (int)ClickedSprite.Tag;
             if (ClickedSprite.Name == "Player")
-                sprite = listSprites[spriteInt + defaultSpriteSheetSize];// Temp for the size or the first spritesheet
+                sprite = listSprites[spriteInt + defaultSpriteSheetSize];
             else if (ClickedSprite.Name == "Enemy")
                 sprite = listSprites[spriteInt + defaultSpriteSheetSize + playerSpriteSheetSize];
             else
-                sprite = listSprites[spriteInt];//(ImageBrush)ClickedSprite.Fill;
+                sprite = listSprites[spriteInt];
             selectedSprite.Name = ClickedSprite.Name;
             // Reset the special tile
             specialTile = null;

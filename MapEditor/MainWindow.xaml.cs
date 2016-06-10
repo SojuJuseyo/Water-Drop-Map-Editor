@@ -504,17 +504,17 @@ namespace MapEditor
                                     else
                                     {
                                         if (usedBlockSprites.ContainsKey(k))
-                                        {
                                             if (globalMap[i, j].tileSprite == usedBlockSprites[k])
-                                            {
                                                 if (globalMap[i, j].spriteType == SpriteType.BLOCK)
                                                     blockTileList.Add(new tile() { coordx = i, coordy = j, collidable = globalMap[i, j].collidable, properties = globalMap[i, j].properties });
-                                                else if (globalMap[i, j].spriteType == SpriteType.PLAYER)
+                                        if (usedPlayerSprites.ContainsKey(k - defaultSpriteSheetSize))
+                                            if (globalMap[i, j].tileSprite == usedPlayerSprites[k - defaultSpriteSheetSize])
+                                                if (globalMap[i, j].spriteType == SpriteType.PLAYER)
                                                     playerTileList.Add(new tile() { coordx = i, coordy = j, collidable = globalMap[i, j].collidable, properties = globalMap[i, j].properties });
-                                                else if (globalMap[i, j].spriteType == SpriteType.ENEMY)
+                                        if (usedEnemySprites.ContainsKey(k - defaultSpriteSheetSize - playerSpriteSheetSize))
+                                            if (globalMap[i, j].tileSprite == usedEnemySprites[k - defaultSpriteSheetSize - playerSpriteSheetSize])
+                                                if (globalMap[i, j].spriteType == SpriteType.ENEMY)
                                                     enemyTileList.Add(new tile() { coordx = i, coordy = j, collidable = globalMap[i, j].collidable, properties = globalMap[i, j].properties });
-                                            }
-                                        }
                                     }
                                 }
                             }

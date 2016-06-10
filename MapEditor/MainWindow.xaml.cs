@@ -1121,8 +1121,8 @@ namespace MapEditor
         {
             System.Windows.Forms.OpenFileDialog openFilePopup = new System.Windows.Forms.OpenFileDialog();
 
-            openFilePopup.DefaultExt = ".wav";
-            openFilePopup.Filter = "All Supported Audio | *.wav";
+            openFilePopup.DefaultExt = ".mp3";
+            openFilePopup.Filter = "All Supported Audio | *.wav;*.mp3";
             openFilePopup.Title = "Open an audio file";
             openFilePopup.ShowDialog();
 

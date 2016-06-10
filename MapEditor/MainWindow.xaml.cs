@@ -111,6 +111,11 @@ namespace MapEditor
                     return;
             }
 
+            defaultSpriteSheetSize = 0;
+            playerSpriteSheetSize = 0;
+            enemySpriteSheetSize = 0;
+            numberPlayerOnMap = 0;
+
             NewMap createNewMapWindow = new NewMap();
             createNewMapWindow.Owner = this;
             createNewMapWindow.ShowDialog();
@@ -991,6 +996,9 @@ namespace MapEditor
         private void spriteButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Shapes.Rectangle ClickedSprite = (System.Windows.Shapes.Rectangle)e.OriginalSource;
+
+            Console.WriteLine(spriteInt);
+            Console.WriteLine(defaultSpriteSheetSize);
 
             spriteInt = (int)ClickedSprite.Tag;
             if (ClickedSprite.Name == "Player")

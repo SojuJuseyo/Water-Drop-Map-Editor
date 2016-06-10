@@ -1,7 +1,7 @@
 ﻿MapEditor
 
 
-winexe
+exe
 C#
 .cs
 C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\obj\Debug\
@@ -16,5 +16,5 @@ C:\Users\Thomas\Water-Drop-Map-Editor\MapEditor\App.xaml
 15-2052118173
 GenericErrorPopup.xaml;MainMenu.xaml;MainWindow.xaml;NewMap.xaml;NoConfigFilePopup.xaml;SavePopup.xaml;TilePropertiesWindow.xaml;
 
-False
+True
 

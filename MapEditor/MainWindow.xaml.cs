@@ -215,6 +215,7 @@ namespace MapEditor
                     defaultSpriteSheetSize = 0;
                     playerSpriteSheetSize = 0;
                     enemySpriteSheetSize = 0;
+                    numberPlayerOnMap = 0;
 
                     newGlobalMap = new tile[newMapWidth, newMapHeight];
 
@@ -997,6 +998,8 @@ namespace MapEditor
 
             if (specialTileType == SpecialTile.CLEAR)
             {
+                if (globalMap[x, y].spriteType == SpriteType.PLAYER)
+                    numberPlayerOnMap--;
                 globalMap[x, y] = null;
                 rectangle.Stroke = new SolidColorBrush(Colors.Black);
                 rectangle.StrokeThickness = 1;
